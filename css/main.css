@@ -1,0 +1,57 @@
+
+.wrap {
+    opacity-background: 0.0;
+}
+
+body {
+    font-family: monospace;
+}
+
+h1 {
+    font-size: 1.3em;
+    color: #b0c4de;
+}
+
+h2 {
+    color: #00FF7F;
+}
+
+
+p {
+    color: #fff;
+    font-size: 12pt;
+    font-smooth: never;
+}
+
+.headpar {
+    color:#00FFFF;
+}
+
+.headital {
+    color: #FFFF00;
+}
+
+a {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+ /* unvisited link */
+a:link {
+  color: #00FFFF;
+}
+
+/* visited link */
+a:visited {
+  color: #e916d5;
+}
+
+
+/* selected link */
+a:active {
+  color: blue;
+} 
+
+a:hover {
+    text-decoration: underline;
+}

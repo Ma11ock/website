@@ -1,0 +1,7 @@
+* home page
+** basic info and links
+** blog posts
+** yt uploads
+** github feed
+** game feed
+
