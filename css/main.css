@@ -4,11 +4,13 @@
 }
 
 body {
-    font-family: monospace;
+    font-family: Inconsolata, "Courier New", monospace;
+    background-image:url(../res/bg.png);
+    color=#000;
 }
 
 h1 {
-    font-size: 1.3em;
+    font-size: 1.5em;
     color: #b0c4de;
 }
 
@@ -19,7 +21,7 @@ h2 {
 
 p {
     color: #fff;
-    font-size: 12pt;
+    font-size: 14pt;
     font-smooth: never;
 }
 
