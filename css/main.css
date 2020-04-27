@@ -10,6 +10,7 @@ table p {
     margin: 0;
 }
 
+
 .wrap {
     opacity-background: 0.0;
 }
@@ -19,22 +20,45 @@ table p {
     background-image:url(../res/bg.png);
     border: 0.2em solid #285577;
     /* positioning */
-    margin: 7%;
+    margin: 0 auto;
+    margin-top: 75px;
     width: 75%;
 }
 
+#gnu-emacs {
+    width: 2%;
+}
+
 .ebar {
-    border: 0.6em solid #CCCCCC;
+    height: 1.3em;
+    background-color: #CCCCCC;
     padding: 0;
     margin : 0;
+    width: 100%;
 }
 
 .ebar-top {
-    border: 0.1em solid #F5F5F5;
+    border: 0.15em solid #F5F5F5;
 }
 
 .ebar-bot {
-    border: 0.1em solid #7A7A7A;
+    border: 0.15em solid #7A7A7A;
+}
+
+.ebar p {
+    padding: 0;
+    margin: 0;
+    font-size: 1.2em;
+    display: inline;
+    color: black;
+}
+
+
+.ebar .title-red {
+    padding: 0;
+    margin: 0;
+    font-size: 0.8em;
+    color: #B22;
 }
 
 
