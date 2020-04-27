@@ -14,10 +14,33 @@ table p {
     opacity-background: 0.0;
 }
 
+
+.emacs {
+    background-image:url(../res/bg.png);
+    border: 0.2em solid #285577;
+    /* positioning */
+    margin: 7%;
+    width: 75%;
+}
+
+.ebar {
+    border: 0.6em solid #CCCCCC;
+    padding: 0;
+    margin : 0;
+}
+
+.ebar-top {
+    border: 0.1em solid #F5F5F5;
+}
+
+.ebar-bot {
+    border: 0.1em solid #7A7A7A;
+}
+
+
 body {
     font-family: Inconsolata, "Courier New", monospace;
-    background-image:url(../res/bg.png);
-    color=#000;
+    background-color: #C8C8C8;
 }
 
 h1 {
