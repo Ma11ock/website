@@ -2,7 +2,7 @@
 table {
     table-layout: fixed;
     border-collapse: collapse;
-    border-spacing:0;
+    border-spacing: 0;
     width: 100%;
     justify-content: left;
 }
@@ -64,7 +64,7 @@ tr td:nth-of-type(2) {
     margin: 0;
     font-size: 1.2em;
     display: inline;
-    color: black;
+    color: #00008B;
 }
 
 
@@ -89,8 +89,19 @@ h1 {
     color: #b0c4de;
 }
 
+title {
+    color: #00FFFF;
+}
+
 h2 {
     color: #00FF7F;
+    font-size: 26pt;
+}
+
+h3 {
+    font-size: 16pt;
+    color: #B0C4DE;
+    text-decoration: underline;
 }
 
 

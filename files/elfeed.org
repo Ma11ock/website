@@ -1,0 +1,49 @@
+#+TAGS: elfeed comic cs distro based
+
+* Comics                                                       :elfeed:comic:
+** [[https://xkcd.com/atom.xml][xkcd]]
+** [[https://stonetoss.com/index.php/comic/feed/][Stonetoss]]                                                       :based:
+** [[https://yoloswagstudios.com/feed][Yolo Swag Studios]]
+** [[https://www.theonion.com/tag/editorial-cartoon/rss][Onion Ed. Cartoon]]
+** [[https://hedgewik.com/feed][HedgeWik]]
+** [[http://comicfeeds.chrisbenard.net/view/dilbert/default][Dilbert]]
+* Blogs                                                         :elfeed:blog:
+** cs                                                                   :cs:
+*** [[https://lukesmith.xyz/rss.xml][Luke Smith]]                                                      :based:
+*** [[http://techrights.org/feed/][Techrights]]
+** Based                                                             :based:
+*** [[https://theamericansun.com/author/zaoist1350/feed][AS Zaoist]]
+*** [[https://theamericansun.com/author/pozbutton/feed][AS Borzoi]]
+*** [[https://theamericansun.com/author/drpottz/feed][AS Nightmare Vision]]
+*** [[https://theamericansun.com/author/h4nkoslo/feed][AS Hank Oslo]]
+*** [[https://spottedtoad.wordpress.com/feed][Spotted Toad]]
+*** [[https://thefaceberg.com/blog/feed][Life As a Service]]
+*** [[https://zerohplovecraft.wordpress.com/feed][Zero HP Lovecraft]]
+*** [[https://americanmind.org/author/bronze-age-pervert/feed][Bronze Age Pervert]]
+*** [[https://americanmind.org/author/curtis-yarvin/feed][Curtis Yarvin]]
+*** [[https://autisticmercury.com/feed][The Autistic Mercury]]
+* Computer Science                                                :elfeed:cs:
+** [[https://www.distrotube.com/videos/index.xml][DistroTube]]                                                         :blog:
+** Emacs                                                           :emacs:
+**** [[http://emacsrocks.com/atom.xml][Emacs Rocks]]
+**** [[https://www.reddit.com/r/emacs/.rss][Emacs Reddit]]                                                :reddit:
+**** [[http://www.sxemacs.org/rss/news.rss][SXEmacs]]
+**** [[https://www.bytedude.com/feed.xml][Bytedude]]
+** Distro news                                                   :distro:
+*** [[https://www.archlinux.org/feeds/news/][Arch Linux]]
+*** [[https://archhurd.org/feeds/news][Arch Hurd]]
+*** [[https://www.debian.org/News/news][Debian]]
+* Podcasts                                                   :elfeed:podcast:
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCR85PW_B_7_Aisx5vNS7Gjw][The Portal]]
+** [[https://anchor.fm/s/130b5bcc/podcast/rss][Heme Review]]
+** Based                                                             :based:
+*** [[https://media.zencast.fm/the-poz-button/rss][Poz Button]]
+*** [[https://madattheinternet.libsyn.com/rss][Mad at the Internet]]
+*** [[http://feeds.soundcloud.com:users:724514305/sounds.rss][TekWars]]
+*** [[https://theperfumenationalist.libsyn.com/rss][Perfume Nationalist]]
+*** [[https://notrelated.xyz/rss][Not Related!]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCmJ7sVB0K32-kyJYQ6nGTrg][Highly Respected]]
+* Videos                                                      :elfeed:video:
+** [[https://www.bitchute.com/feeds/rss/channel/mistermetokur/][Mister Metokur]]
+** [[https://www.bitchute.com/feeds/rss/channel/lukesmith/][Luke Smith Videos]]
+

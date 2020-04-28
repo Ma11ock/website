@@ -1,16 +1,96 @@
 <!DOCTYPE html>
 <html>
     <meta charset="utf-8"/>
-    <meta name="description" content="Blog">
-    <meta name="author" content="Ryan Jeffrey">
+    <meta name="Ryan Jeffrey" content="Programs">
 
     <link href="css/main.css" rel="stylesheet">
     <title>Setup</title>
 
     <body>
-        <a href="http://www.sxemacs.org/"> 
-            <imp src="res/stickies/sxe.png" />
-        </a>
-        <br/>
+        <div class="emacs">
+            <div class="ebar-top"></div>
+            <div class="ebar">
+                <p class="title-red">------</p>
+                <img id="gnu-emacs" src="res/gnu-emacs.png"/> <p>Setup</p>
+            </div>
+            <div class="ebar-bot"></div>
+
+            <center><h1>My Setup</h1></center>
+
+            
+            <h2>Priorities:</h2>
+            <p>
+                I am a Emacs user first and foremost. Because Emacs is essentially a Userland replacement all of the other programs I use have to conform to Emacs and not get in its way. This is why I no longer use tiling window managers: Emacs is already a window manager, there is no reason to use two programs with the same functionality.
+            </p>
+
+            <h2>Basic Setup</h2>
+            <h3>Text Editor</h3>
+            
+            <p><a href="https://www.gnu.org/software/emacs/">Emacs</a>. I use Wordstar keybindings. In instances when I cannot run Emacs
+                or it is too cumbersome for a task I use <a href="https://github.com/jhallen/joe-editor">Joe's Own Editor</a>.</p>
+
+            <h3>Operating System</h3>
+            <p>I run <a href="https://wiki.debian.org/DebianBullseye">Debian Bullseye</a> on my workstation these days. I ran <a href="https://www.archlinux.org/">Arch Linux</a> 
+                and <a href="https://manjaro.org/">Manjaro</a> but Manjaro became unstable after a year of use. My ThinkPad T420 is, however, still on Arch.</p>
+
+            <h3>Desktop</h3>
+            <p><a href="https://xfce.org/">XFCE</a> is my desktop, with <a href="https://github.com/yshui/picom">picom</a> as its compositing window manager. KDE is probably objectively better but XFCE's killer feature is its customizability. It cannot be beat.</p>
+
+            <h3>Terminal</h3>
+            <p><a href="https://github.com/lukesmithxyz/st">Luke Smith's build of st</a>. It is a preconfigured and patched version of the <a href="https://st.suckless.org/">suckless terminal</a>. I'm experimenting with <a href="https://github.com/akermu/emacs-libvterm">vterm</a>  in Emacs but it is not quite ready to become a full-time terminal yet.</p>
+
+            <h3>Email</h3>
+            <p><a href="https://wiki.archlinux.org/index.php/Msmtp">msmtp</a>, <a href="https://wiki.archlinux.org/index.php/Isync">isync</a>, and <a href="https://www.djcbsoftware.nl/code/mu/mu4e.html">mu/mu4e</a> so I can manage  my mail in Emacs. I use gnome-keyring to manage my passwords.
+
+            </p>
+            <p>
+                Currently I am still stuck on GMAIL but I plan to move to my own mail server eventually...
+            </p>
+
+            <h3>Content</h3>
+            <p>I consume content mostly via my RSS feed with <a href="https://github.com/skeeto/elfeed">elfeed</a>. You can view my RSS feed <a href="files/elfeed.org">here</a>.</p>
+
+            <h3>Documents</h3>
+            <p>I use Latex with the LuaLatex engine for creating my own documents.  I use Emacs's pdf-view-mode with auto-revert-mode enabled for a live environment. For pdf consumption I usually use <a href="https://pwmt.org/projects/zathura/">Zathura</a> or <a href="https://wiki.gnome.org/Apps/Evince">Gnome Document Viewer</a> if I want something bloated.</p>
+
+            <h3>Browser</h3>
+            <p><a href="https://brave.com/">Brave</a> is the best in the business. Unfortunately, it seems to have problems on my workstation where it stutters while trying to open new tabs. Apparently this is because Brave tries to move massive amounts of data between main memory and VRAM. I retry Brave every six or so months to see if this is fixed and although it is better every time it still suffers from stuttering.
+                </p>
+
+                <p>
+                    As a result, I am stuck on firefox.</p>
+
+                <h3>Shell</h3>
+                <p><a href="http://www.zsh.org/">zsh</a> with <a href="https://ohmyz.sh/">oh my zsh</a> as its package manager.</p>
+
+                <h2>Emacs</h2>
+                <h3>Keybinds</h3>
+                <p>I have Wordstar keybindings provided by my very own <a href="https://github.com/Ma11ock/joestar">Joestar</a>. It is still in pre-alpha so I do not recommend using it yet.</p>
+
+                <h3>Theme</h3>
+                <p><a href="https://elpa.gnu.org/packages/modus-vivendi-theme.html">Modus Vivendi</a>.</p>
+
+                <h3>General</h3>
+                <p>I've used Ivy since the beginning but I plan to get rid of it soon. I briefly used Helm but it's so bloated it slowed down my ThinkPad.</p>
+
+                <h2>Themes</h2>
+                <h3>GTK and QT</h3>
+                <p>For Icons and general GTK3 I use flat-remix-blue-dark. I use Qogir dark for my window theme.</p>
+
+                <h3>Terminal</h3>
+                <p>Just simple black-on-grey-text.</p>
+
+                <h3>Font</h3>
+                <p>Terminal font is Inconsolata but Emacs uses Hack. My UI font is usually Ubuntu Regular.</p>
+                
+        </div>
+
+        <div class="fttr">
+            <a href="https://www.sxemacs.org/"> 
+                <imp src="res/stickies/sxe.png" />
+            </a>
+            <br/>
+        </div>
+
     </body>
 </html>
