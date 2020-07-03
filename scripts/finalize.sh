@@ -14,16 +14,19 @@ cp -r res site-final/
 cp -r css site-final/
 cp -r files site-final/
 
-# For changes that need only happen if the file was modified
-foreach script in "scripts/setdate.zsh"; do
-	foreach html in *.html; do
-		([ "$1" = "-nodate" ] || [ "$html" -nt ".lastmod" ]) && "$script" "$html"
+cp index.html programs.html other.html site-final/.
+
+# For blogs
+foreach script in "scripts/blogize.sh"; do
+	foreach html in blogs/*.html; do
+		([ "$1" = "--nodate" ] || [ "$html" -nt ".lastmod" ]) && "$script" "$html"
 	done
 done
 
-# For blogs
-foreach script in "scripts/setdate.zsh" "scripts/blogize.sh"; do
-	foreach html in blogs/*.html; do
+
+# Finishing touched (like last modified date)
+foreach script in "scripts/setdate.zsh"; do
+	foreach html in site-final/*.html site-final/blogs/*.html; do
 		([ "$1" = "--nodate" ] || [ "$html" -nt ".lastmod" ]) && "$script" "$html"
 	done
 done

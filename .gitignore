@@ -58,3 +58,5 @@ files/
 site-final/
 
 .lastmod
+ 
+template.html
