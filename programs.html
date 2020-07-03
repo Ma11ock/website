@@ -12,39 +12,60 @@
             <div class="ebar">
                 <p class="title-red">------</p>
                 <img id="gnu-emacs" src="res/gnu-emacs.png"/> <p>Setup</p>
+                
+                <div class="last">
+                    <p class="modded">Last Modified: <!--DATE--></p>
+                </div>
+           
             </div>
-            <div class="ebar-bot"></div>
+             <div class="ebar-bot"></div>
 
+            <a href="index.html"><h4><-Back</h4></a>
             <center><h1>My Setup</h1></center>
 
             
             <h2>Priorities:</h2>
             <p>
-                I am a Emacs user first and foremost. Because Emacs is essentially a Userland replacement all of the other programs I use have to conform to Emacs and not get in its way. This is why I no longer use tiling window managers: Emacs is already a window manager, there is no reason to use two programs with the same functionality.
+                First and foremost I prioritize free-as-in-free software over all else. I tend to have a bias for programs that I use first; whenever I try new software I'm always comparing it to its alternatives that I've used in the past. 
             </p>
+
+            <p>
+                I use to use Emacs, hence the design for this site. You'll also find some Emacs software in here
+                as well.
+
+                I no longer use Emacs as an OS replacement for two reasons:
+            </p>
+            <ul>
+                <li>It isn't asynchronous. This means that whenever you start a heavy task (like update your packages) the entire editor just stops, and when you do everything in Emacs (email, rss) this is a problem. On Unix, everything runs as a separate process, so I could read my email and update my system at the same time.</li>
+                <li>Elisp.</li>
+            </ul>
 
             <h2>Basic Setup</h2>
             <h3>Text Editor</h3>
             
-            <p><a href="https://www.gnu.org/software/emacs/">Emacs</a>. I use Wordstar keybindings. In instances when I cannot run Emacs
-                or it is too cumbersome for a task I use <a href="https://github.com/jhallen/joe-editor">Joe's Own Editor</a>.</p>
+            <p>I use <a href="TODO">Joestar</a>, my fork of <a href="https://github.com/jhallen/joe-editor">Joe's Own Editor</a>.
+                Joe was the first command-line text editor I  ever used, because it was the only one I could figure out how to close
+            (with Ctrl-C).</p>
 
             <h3>Operating System</h3>
             <p>I run <a href="https://wiki.debian.org/DebianBullseye">Debian Bullseye</a> on my workstation these days. I ran <a href="https://www.archlinux.org/">Arch Linux</a> 
                 and <a href="https://manjaro.org/">Manjaro</a> but Manjaro became unstable after a year of use. My ThinkPad T420 is, however, still on Arch.</p>
 
             <h3>Desktop</h3>
-            <p><a href="https://xfce.org/">XFCE</a> is my desktop, with <a href="https://github.com/yshui/picom">picom</a> as its compositing window manager. KDE is probably objectively better but XFCE's killer feature is its customizability. It cannot be beat.</p>
+            <p><a href="https://xfce.org/">i3gaps</a> is my desktop, with <a href="https://github.com/yshui/picom">picom</a> as
+                its compositing window manager. I've experimented with several other Window Managers (bspwm and dwm come to mind)
+                but I was never satisfied with my configurations. I always go back to i3.</p>
 
             <h3>Terminal</h3>
-            <p><a href="https://github.com/lukesmithxyz/st">Luke Smith's build of st</a>. It is a preconfigured and patched version of the <a href="https://st.suckless.org/">suckless terminal</a>. I'm experimenting with <a href="https://github.com/akermu/emacs-libvterm">vterm</a>  in Emacs but it is not quite ready to become a full-time terminal yet.</p>
-
+            <p><a href="https://github.com/lukesmithxyz/st">Luke Smith's build of st</a>. It is a preconfigured and patched version of the <a href="https://st.suckless.org/">suckless terminal</a>.</p>
+            
             <h3>Email</h3>
             <p><a href="https://wiki.archlinux.org/index.php/Msmtp">msmtp</a>, <a href="https://wiki.archlinux.org/index.php/Isync">isync</a>, and <a href="https://www.djcbsoftware.nl/code/mu/mu4e.html">mu/mu4e</a> so I can manage  my mail in Emacs. I use gnome-keyring to manage my passwords.
-
+                I've tried neomutt several times in the past but I got too used to how mu4e works. neomutt also does not handle images and graphics
+                as well as mu4e.
             </p>
             <p>
-                Currently I am still stuck on GMAIL but I plan to move to my own mail server eventually...
+                Currently I am still stuck on GMAIL but I plan to move to my own mail server soon...
             </p>
 
             <h3>Content</h3>
@@ -54,24 +75,10 @@
             <p>I use Latex with the LuaLatex engine for creating my own documents.  I use Emacs's pdf-view-mode with auto-revert-mode enabled for a live environment. For pdf consumption I usually use <a href="https://pwmt.org/projects/zathura/">Zathura</a> or <a href="https://wiki.gnome.org/Apps/Evince">Gnome Document Viewer</a> if I want something bloated.</p>
 
             <h3>Browser</h3>
-            <p><a href="https://brave.com/">Brave</a> is the best in the business. Unfortunately, it seems to have problems on my workstation where it stutters while trying to open new tabs. Apparently this is because Brave tries to move massive amounts of data between main memory and VRAM. I retry Brave every six or so months to see if this is fixed and although it is better every time it still suffers from stuttering.
-                </p>
-
-                <p>
-                    As a result, I am stuck on firefox.</p>
+            <p><a href="https://brave.com/">Brave</a>.</p>
 
                 <h3>Shell</h3>
-                <p><a href="http://www.zsh.org/">zsh</a> with <a href="https://ohmyz.sh/">oh my zsh</a> as its package manager.</p>
-
-                <h2>Emacs</h2>
-                <h3>Keybinds</h3>
-                <p>I have Wordstar keybindings provided by my very own <a href="https://github.com/Ma11ock/joestar">Joestar</a>. It is still in pre-alpha so I do not recommend using it yet.</p>
-
-                <h3>Theme</h3>
-                <p><a href="https://elpa.gnu.org/packages/modus-vivendi-theme.html">Modus Vivendi</a>.</p>
-
-                <h3>General</h3>
-                <p>I've used Ivy since the beginning but I plan to get rid of it soon. I briefly used Helm but it's so bloated it slowed down my ThinkPad.</p>
+                <p><a href="https://www.zsh.org/">zsh</a> with <a href="https://ohmyz.sh/">oh my zsh</a> as its package manager.</p>
 
                 <h2>Themes</h2>
                 <h3>GTK and QT</h3>

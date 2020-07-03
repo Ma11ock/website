@@ -1,0 +1,744 @@
+#+TITLE: Mailmacs: Email within Emacs With ~mu4e~, ~msmtp~, ~gnome-keyring~, and ~mbsync~.
+#+AUTHOR: Ryan
+#+EMAIL: ryan@ryanmj.xyz
+#+OPTIONS: num:nil
+
+In this post you will learn how to set up and configure ~mbsync~, ~msmtp~, mu with ~mu4e~ on Linux (debian-based and Arch-based).
+
+There are many guides on the internet on how to set up ~mu4e~, but here, I aim at the best, most complex configuration possible.
+There are lots of moving parts that need to be perfectly in-sync in order to get this done properly. It is a PITA if you are a beginner.
+This post is essentially an amalgamation of the best aspects of other guides I found, which I will link to throughout the post and at the
+bottom of the article.
+
+The final configuration will have ~mbsync~ as the mailbox synchronizer, ~mu~ as the indexer, ~mu4e~ as the mail client, ~msmtp~ as the smtp client, 
+and ~gnome-keyring~ as a password manager.
+
+** Getting everything you need:
+Obviously you will need to have Emacs installed and set up as a system daemon using ~emacsclient~. 
+Read [[https://www.emacswiki.org/emacs/EmacsAsDaemon][this article]] to learn how to set this up if you haven't already.
+*** On Arch Linux:
+#+BEGIN_SRC sh
+  sudo pacman -Syu msmtp msmtp-mta isync gnome-keyring libsecret seahorse
+#+END_SRC
+
+You will also need the package ~mu~ from the AUR.
+
+*** On Debian
+#+BEGIN_SRC sh
+  sudo apt-get update && sudo apt-get upgrade
+  sudo apt-get install mu4e isync msmtp msmtp-gnome gnome-keyring libsecret-tools seahorse libsecret-1-dev maildirutils
+#+END_SRC
+
+** Prepping Your Email
+*** Gmail
+If you're a technically minded person in <current year> you shoulnd't be using Gmail if you have a choice (or G©©gle in general). 
+Get a cheap xyz domain, a VPS, and set up a mail server. That being said, many people don't have a choice, or are like me and have 
+their old gmail attached to too many accounts across the internet.
+
+In order to download your Email so it can be used by Emacs you must first [[https://support.google.com/mail/answer/7126229][enable IMAP support]].
+If you have two factor authentication (which you should), you will also need to [[https://support.google.com/accounts/answer/185833?hl=en][create an app password]]. Copy your password to the clipboard.
+*** Personal Email Server
+If you're like me and you just set up your own personal email server with the help of [[https://www.youtube.com/watch?v=9zP7qooM4pY&t=179s][Luke Smith's guide]] then you're set to go. However, 
+this information from his github will be very  relevant to you:
+#+BEGIN_QUOTE
+Let's say you want to access your mail with Thunderbird or mutt or another email program. For my domain, the server information will be as follows:
+
+    SMTP server: mail.lukesmith.xyz
+    SMTP port: 587
+    IMAP server: mail.lukesmith.xyz
+    IMAP port: 993
+    Username luke (I.e. not luke@lukesmith.xyz)
+
+The last point is important. Many email systems use a full email address on login. Since we just simply use local PAM logins, only the user's name is used (this makes a difference if you're using my mutt-wizard, etc.).
+#+END_QUOTE
+** ~mbsync~
+- Note taken on [2020-06-30 Tue 18:09]
+1. Create a directory ~~/.Maildir~ (or really, you can name it whatever you want).
+2. Open a file called ~~/.mbsyncrc~ and paste this into it:
+#+BEGIN_SRC conf
+  ##############################################################################
+  #                                 First Gmail                                #
+  ##############################################################################
+  
+  # mbsyncrc based on
+  # http://www.ict4g.net/adolfo/notes/2014/12/27/EmacsIMAP.html
+  # ACCOUNT INFORMATION
+  IMAPAccount gmail-1
+  # Address to connect to
+  Host imap.gmail.com
+  User gmail1@gmail.com
+  PassCmd "secret-tool lookup host imap.gmail.com user gmail1@gmail.com"
+  AuthMechs LOGIN
+  SSLType IMAPS
+  SSLVersions TLSv1.2
+  CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+  # THEN WE SPECIFY THE LOCAL AND REMOTE STORAGE
+  # - THE REMOTE STORAGE IS WHERE WE GET THE MAIL FROM (E.G., THE
+  #   SPECIFICATION OF AN IMAP ACCOUNT)
+  # - THE LOCAL STORAGE IS WHERE WE STORE THE EMAIL ON OUR COMPUTER
+
+  # REMOTE STORAGE (USE THE IMAP ACCOUNT SPECIFIED ABOVE)
+  IMAPStore gmail-1-remote
+  Account gmail-1
+
+  # LOCAL STORAGE (CREATE DIRECTORIES with mkdir -p ~/.Maildir/gmail-1)
+  MaildirStore gmail-1-local
+  Path ~/.Maildir/gmail-1/
+  Inbox ~/.Maildir/gmail-1/INBOX
+  # REQUIRED ONLY IF YOU WANT TO DOWNLOAD ALL SUBFOLDERS; SYNCING SLOWS DOWN
+  # SubFolders Verbatim
+
+  # CONNECTIONS SPECIFY LINKS BETWEEN REMOTE AND LOCAL FOLDERS
+  #
+  # CONNECTIONS ARE SPECIFIED USING PATTERNS, WHICH MATCH REMOTE MAIl
+  # FOLDERS. SOME COMMONLY USED PATTERS INCLUDE:
+  #
+  # 1 "*" TO MATCH EVERYTHING
+  # 2 "!DIR" TO EXCLUDE "DIR"
+  # 3 "DIR" TO MATCH DIR
+
+  Channel gmail-1-inbox
+  Master :gmail-1-remote:
+  Slave :gmail-1-local:
+  Patterns "INBOX"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel gmail-1-trash
+  Master :gmail-1-remote:"[Gmail]/Trash"
+  Slave :gmail-1-local:"[gmail1].Trash"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel gmail-1-sent
+  Master :gmail-1-remote:"[Gmail]/Sent Mail"
+  Slave :gmail-1-local:"[gmail1].Sent Mail"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel gmail-1-all
+  Master :gmail-1-remote:"[Gmail]/All Mail"
+  Slave :gmail-1-local:"[gmail1].All Mail"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel gmail-1-starred
+  Master :gmail-1-remote:"[Gmail]/Starred"
+  Slave :gmail-1-local:"[gmail1].Starred"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  # GROUPS PUT TOGETHER CHANNELS, SO THAT WE CAN INVOKE
+  # MBSYNC ON A GROUP TO SYNC ALL CHANNELS
+  #
+  # FOR INSTANCE: "mbsync gmail" GETS MAIL FROM
+  # "gmail-inbox", "gmail-sent", and "gmail-trash"
+  #
+  Group gmail-1
+  Channel gmail-1-inbox
+  Channel gmail-1-sent
+  Channel gmail-1-trash
+  Channel gmail-1-all
+  Channel gmail-1-starred
+
+
+  ##############################################################################
+  #                                 Second Gmail                               #
+  ##############################################################################
+
+
+  # ACCOUNT INFORMATION
+  IMAPAccount gmail-2
+  # Address to connect to
+  Host imap.gmail.com
+  User gmail2@gmail.com
+  PassCmd "secret-tool lookup host imap.gmail.com user gmail2@gmail.com"
+  AuthMechs LOGIN
+  SSLType IMAPS
+  SSLVersions TLSv1.2
+  CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+  # THEN WE SPECIFY THE LOCAL AND REMOTE STORAGE
+  # - THE REMOTE STORAGE IS WHERE WE GET THE MAIL FROM (E.G., THE
+  #   SPECIFICATION OF AN IMAP ACCOUNT)
+  # - THE LOCAL STORAGE IS WHERE WE STORE THE EMAIL ON OUR COMPUTER
+
+  # REMOTE STORAGE (USE THE IMAP ACCOUNT SPECIFIED ABOVE)
+  IMAPStore gmail-2-remote
+  Account gmail-2
+
+  # LOCAL STORAGE (CREATE DIRECTORIES with mkdir -p ~/Maildir/gmail-2)
+  MaildirStore gmail-2-local
+  Path ~/.Maildir/gmail-2/
+  Inbox ~/.Maildir/gmail-2/INBOX
+
+  # CONNECTIONS SPECIFY LINKS BETWEEN REMOTE AND LOCAL FOLDERS
+  #
+  # CONNECTIONS ARE SPECIFIED USING PATTERNS, WHICH MATCH REMOTE MAIl
+  # FOLDERS. SOME COMMONLY USED PATTERS INCLUDE:
+  #
+  # 1 "*" TO MATCH EVERYTHING
+  # 2 "!DIR" TO EXCLUDE "DIR"
+  # 3 "DIR" TO MATCH DIR
+
+  Channel gmail-2-inbox
+  Master :gmail-2-remote:
+  Slave :gmail-2-local:
+  Patterns "INBOX"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel gmail-2-trash
+  Master :gmail-2-remote:"[Gmail]/Trash"
+  Slave :gmail-2-local:"[gmail2].Trash"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel gmail-2-sent
+  Master :gmail-2-remote:"[Gmail]/Sent Mail"
+  Slave :gmail-2-local:"[gmail2].Sent Mail"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel gmail-2-all
+  Master :gmail-2-remote:"[Gmail]/All Mail"
+  Slave :gmail-2-local:"[gmail2].All Mail"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel gmail-2-starred
+  Master :gmail-2-remote:"[Gmail]/Starred"
+  Slave :gmail-2-local:"[gmail2].Starred"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  # GROUPS PUT TOGETHER CHANNELS, SO THAT WE CAN INVOKE
+  # MBSYNC ON A GROUP TO SYNC ALL CHANNELS
+  #
+  # FOR INSTANCE: "mbsync gmail" GETS MAIL FROM
+  # "gmail-inbox", "gmail-sent", and "gmail-trash"
+  #
+  Group gmail-2
+  Channel gmail-2-inbox
+  Channel gmail-2-sent
+  Channel gmail-2-trash
+  Channel gmail-2-all
+  Channel gmail-2-starred
+
+  ################################################################################
+  #                             personal webserver                               #
+  ################################################################################
+
+  # mbsyncrc based on
+  # http://www.ict4g.net/adolfo/notes/2014/12/27/EmacsIMAP.html
+  # ACCOUNT INFORMATION
+  IMAPAccount personal-mail
+  # Address to connect to
+  Host mail.personal-site.xyz
+  User me
+  PassCmd "secret-tool lookup host mail.personal.xyz user ryan"
+  AuthMechs LOGIN
+  SSLType IMAPS
+  SSLVersions TLSv1.2
+  CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+  # THEN WE SPECIFY THE LOCAL AND REMOTE STORAGE
+  # - THE REMOTE STORAGE IS WHERE WE GET THE MAIL FROM (E.G., THE
+  #   SPECIFICATION OF AN IMAP ACCOUNT)
+  # - THE LOCAL STORAGE IS WHERE WE STORE THE EMAIL ON OUR COMPUTER
+
+  # REMOTE STORAGE (USE THE IMAP ACCOUNT SPECIFIED ABOVE)
+  IMAPStore personal-mail
+  Account personal-mail
+
+  # LOCAL STORAGE (CREATE DIRECTORIES with mkdir -p ~/Maildir/gmail-1)
+  MaildirStore personal-mail-local
+  Path ~/.Maildir/personal-mail/
+  Inbox ~/.Maildir/personal-mail/INBOX
+  # REQUIRED ONLY IF YOU WANT TO DOWNLOAD ALL SUBFOLDERS; SYNCING SLOWS DOWN
+  # SubFolders Verbatim
+
+  # CONNECTIONS SPECIFY LINKS BETWEEN REMOTE AND LOCAL FOLDERS
+  #
+  # CONNECTIONS ARE SPECIFIED USING PATTERNS, WHICH MATCH REMOTE MAIl
+  # FOLDERS. SOME COMMONLY USED PATTERS INCLUDE:
+  #
+  # 1 "*" TO MATCH EVERYTHING
+  # 2 "!DIR" TO EXCLUDE "DIR"
+  # 3 "DIR" TO MATCH DIR
+
+  Channel personal-mail-inbox
+  Master :personal-mail:
+  Slave :personal-mail-local:
+  Patterns "INBOX"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel personal-mail-trash
+  Master :personal-mail:"Trash"
+  Slave :personal-mail-local:"[personal].Trash"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel personal-mail-sent
+  Master :personal-mail:"Sent"
+  Slave :personal-mail-local:"[personal].Sent Mail"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel personal-mail-junk
+  Master :personal-mail:"Junk"
+  Slave :personal-mail-local:"[personal].Junk"
+  Create Both
+  Expunge Both
+  SyncState *
+
+  Channel personal-mail-drafts
+  Master :personal-mail:"Drafts"
+  Slave :personal-mail-local:"[personal].Drafts"
+  Create Both
+  Expunge Both
+  SyncState *
+
+
+  # GROUPS PUT TOGETHER CHANNELS, SO THAT WE CAN INVOKE
+  # MBSYNC ON A GROUP TO SYNC ALL CHANNELS
+  #
+  # FOR INSTANCE: "mbsync gmail" GETS MAIL FROM
+  # "gmail-inbox", "gmail-sent", and "gmail-trash"
+  #
+  Group personal-mail
+  Channel personal-mail-inbox
+  Channel personal-mail-sent
+  Channel personal-mail-trash
+  Channel personal-mail-junk
+  Channel personal-mail-drafts    
+#+END_SRC
+Replace ~gmail-1~, ~gmail-2~, and ~personal-mail~ with arbitrary names of your choosing 
+(make sure to also change the names in the slave/mail local sections as well.) If you named
+your Maildir anything other than ~~/.Maildir~ then make sure you change the paths as well!
+
+Note for Mac users: the crt file paths might not be accurate.
+
+3. Set up the passwords.
+We will be using gnome-keyring and libsecret for our passwords. For Gmail, run the command below (while inserting your username), 
+and paste the app password you got from google as a response.
+#+BEGIN_SRC shell
+secret-tool store --label=isync host imap.gmail.com service mbsync user yourusername@gmail.com
+#+END_SRC
+You can verify that it worked with the following:
+#+BEGIN_SRC shell
+secret-tool lookup host imap.gmail.com user yourusername@gmail.com
+#+END_SRC
+Or, you could use the graphical password manager ~seahorse~ to verify the password.
+
+For your personal mail server the same information applies, except you should replace ~imap.gmail.com~ with ~mail.yoururl.urdomain~,
+and replace the gmail address with *JUST* your username, no ~@yoururl.urdomain~. For example, my email is ryan@ryanmj.xyz, so my 
+username is just ~ryan~.
+
+Lastly, we need to create the subdirectories in the Maildir. The mbsyncrc file will be your guide. 
+You need to create one subdirectory for each email you have. Mine would have ~gmail-1/~ ~gmail-2/~ and ~personal-mail/~.
+Replace those names with the names associated with the ~IMAPAccount~ label in your mbsyncrc. 
+Next, we must create the `slave' folders. If ~gmail-1~ has an ~All Mail~ slave channel, then create ~gmail-1/[gmail1].All Mail/~.
+
+Example Maildir:
+#+BEGIN_SRC
+  In ~/.Maildir/
+  gmail-1/INBOX
+  gmail-1/[gmail1].All Mail
+  gmail-1/[gmail1].bin
+  gmail-1/[gmail1].Bin
+  gmail-1/[gmail1].drafts
+  gmail-1/[gmail1].Sent Mail
+  gmail-1/[gmail1].Starred
+  gmail-1/[gmail1].Trash
+  gmail-1/queue
+
+  gmail-2/INBOX
+  gmail-2/queue
+  gmail-2/[gmail2].All Mail
+  gmail-2/[gmail2].bin
+  gmail-2/[gmail2].Bin
+  gmail-2/[gmail2].drafts
+  gmail-2/[gmail2].Sent Mail
+  gmail-2/[gmail2].Starred
+  gmail-2/[gmail2].Trash
+
+  personal-mail/INBOX
+  personal-mail/[personal].Drafts
+  personal-mail/[personal].Junk
+  personal-mail/[personal].Sent Mail
+  personal-mail/[personal].Trash
+#+END_SRC
+
+
+Once that business is finished, you can finally run mbsync! Just:
+#+BEGIN_SRC sh
+  mbsync -a
+#+END_SRC
+
+If it begins to work at first but then suddenly fails: don't freak out! If you're downloading a lot of mail you might have just 
+reached a bandwidth limit. Just try again later!
+** ~mu~
+To set up mu:
+#+BEGIN_SRC sh
+mu init -m ~/.Maildir
+#+END_SRC
+Replace ~~/.Maildir~ with the location of your Maildir.
+** ~msmtp~
+#+BEGIN_SRC conf
+account gmail1
+host smtp.gmail.com
+port 587
+protocol smtp
+auth on
+from gmail1@gmail.com
+user gmail1@gmail.com
+# msmtp does not support OAuth, so instead you will have to use user/pass. If you don't have
+# two factor auth enabled, enabling insecure apps to access your email should be sufficient and
+# you can use your normal password, but if you do have it enabled you will need to generate an
+# app password. See the comments in the offlineimap config for details.
+# Once again I'm using `security` to pull the password from my macOS keychain.
+#passwordeval security find-internet-password -g -a nan@nine27.com -s smtp.gmail.com -w
+tls on
+tls_starttls on
+# If you don't have this cert, you can generate it by `brew install curl` and then running
+# `/usr/local/Cellar/curl/<curl version>/libexec/mk-ca-bundle.pl`
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+account gmail2
+host smtp.gmail.com
+port 587
+protocol smtp
+auth on
+from gmail2@gmail.com
+user gmail2@gmail.com
+# msmtp does not support OAuth, so instead you will have to use user/pass. If you don't have
+# two factor auth enabled, enabling insecure apps to access your email should be sufficient and
+# you can use your normal password, but if you do have it enabled you will need to generate an
+# app password. See the comments in the offlineimap config for details.
+# Once again I'm using `security` to pull the password from my macOS keychain.
+#passwordeval security find-internet-password -g -a nan@nine27.com -s smtp.gmail.com -w
+tls on
+tls_starttls on
+# If you don't have this cert, you can generate it by `brew install curl` and then running
+# `/usr/local/Cellar/curl/<curl version>/libexec/mk-ca-bundle.pl`
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+
+# account do
+# host smtp.gmail.com
+# port 587
+# protocol smtp
+# auth on
+# from nzhong@digitalocean.com
+# user nzhong@digitalocean.com
+# passwordeval security find-internet-password -g -a nzhong@digitalocean.com -s smtp.gmail.com -w
+# tls on
+# tls_trust_file ~/.msmtp/ca-bundle.crt
+
+account personal
+host mail.yoururl.urdomain
+port 587
+protocol smtp
+auth plain
+from personal@yoururl.urdomain
+user personal
+
+tls on
+tls_starttls on
+# If you don't have this cert, you can generate it by `brew install curl` and then running
+# `/usr/local/Cellar/curl/<curl version>/libexec/mk-ca-bundle.pl`
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+
+#+END_SRC
+Once again Mac users will have to watch those crt file paths.
+** Bringing it all together with ~mu4e~
+Step 1. Find the location of mu4e. Your distro likely put it in ~/usr/share/emacs/site-lisp/mu4e/~ or ~/usr/local/share/emacs/site-lisp/mu4e/~
+
+Step 2. In Emacs, install the packages:
+#+BEGIN_SRC 
+mu4e-alert mu4e-conversation mu4e-jump-to-list mu4e-maildirs-extension mu4e-overview mu4e-query-fragments
+#+END_SRC
+
+Step 3. Append this to your emacs config file:
+#+BEGIN_SRC emacs-lisp
+(require 'mu4e-alert)
+;; Choose the style you prefer for desktop notifications
+;; If you are on Linux you can use
+;; 1. notifications - Emacs lisp implementation of the Desktop Notifications API
+;; 2. libnotify     - Notifications using the `notify-send' program, requires `notify-send' to be in PATH
+;;
+;; On Mac OSX you can set style to
+;; 1. notifier      - Notifications using the `terminal-notifier' program, requires `terminal-notifier' to be in PATH
+;; 1. growl         - Notifications using the `growl' program, requires `growlnotify' to be in PATH
+(mu4e-alert-set-default-style 'libnotify)
+(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+
+(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display) ; show unread email count on mode line
+
+(mu4e-alert-enable-notifications)
+
+;; mu4e-conversation: comines threads into a single buffer
+(require 'mu4e-conversation)
+(global-mu4e-conversation-mode)
+
+;; allows users to jump to mailing lists
+(require 'mu4e-jump-to-list)
+
+;; Asynchronously update all emails in Maildir
+(require 'mu4e-maildirs-extension)
+(mu4e-maildirs-extension)
+
+;; allows you to see an overview of your maildir
+(require 'mu4e-overview)
+
+
+
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/") ; change this to accommodate your path
+(require 'mu4e)
+
+(setq mu4e-maildir (expand-file-name "~/.Maildir"))
+
+                                       ; get mail
+(setq mu4e-get-mail-command "mbsync -a"
+     ;; mu4e-html2text-command "w3m -T text/html" ;;using the default mu4e-shr2text
+     mu4e-view-prefer-html t
+     mu4e-update-interval 300
+     mu4e-headers-auto-update t
+     mu4e-compose-signature-auto-include nil
+     mu4e-compose-format-flowed t)
+
+;; to view selected message in the browser, no signin, just html mail
+(add-to-list 'mu4e-view-actions
+            '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+
+;; enable inline images
+(setq mu4e-view-show-images t)
+;; use imagemagick, if available
+(when (fboundp 'imagemagick-register-types)
+ (imagemagick-register-types))
+
+;; every new email composition gets its own frame!
+(setq mu4e-compose-in-new-frame t)
+
+;; don't save message to Sent Messages, IMAP takes care of this
+(setq mu4e-sent-messages-behavior 'delete)
+
+(add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+
+;; (defun my-render-html-message ()
+;; (let ((dom (libxml-parse-html-region (point-min) (point-max))))
+;;   (erase-buffer)
+;;   (shr-insert-document dom)
+;;   (goto-char (point-min))))
+
+;; (setq mu4e-html2text-command 'my-render-html-message)
+
+
+;; <tab> to navigate to links, <RET> to open them in browser
+(add-hook 'mu4e-view-mode-hook
+         (lambda()
+           ;; try to emulate some of the eww key-bindings
+           (local-set-key (kbd "<RET>") 'mu4e~view-browse-url-from-binding)
+           (local-set-key (kbd "<tab>") 'shr-next-link)
+           (local-set-key (kbd "<backtab>") 'shr-previous-link)))
+
+;; from https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/elgoumx
+(add-hook 'mu4e-headers-mode-hook
+         (defun my/mu4e-change-headers ()
+           (interactive)
+           (setq mu4e-headers-fields
+                 `((:human-date . 25) ;; alternatively, use :date
+                   (:flags . 6)
+                   (:from . 22)
+                   (:thread-subject . ,(- (window-body-width) 70)) ;; alternatively, use :subject
+                   (:size . 7)))))
+
+;; if you use date instead of human-date in the above, use this setting
+;; give me ISO(ish) format date-time stamps in the header list
+;(setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+
+;; spell check
+(add-hook 'mu4e-compose-mode-hook
+         (defun my-do-compose-stuff ()
+           "My settings for message composition."
+           (visual-line-mode)
+                                        ;(org-mu4e-compose-org-mode)
+           (use-hard-newlines -1)
+           (flyspell-mode)))
+
+;;rename files when moving
+;;NEEDED FOR MBSYNC
+(setq mu4e-change-filenames-when-moving t)
+
+;;set up queue for offline email
+;;use mu mkdir  ~/.Maildir/acc/queue to set up first
+
+;;from the info manual
+(setq mu4e-attachment-dir  "~/Downloads")
+
+(setq message-kill-buffer-on-exit t)
+(setq mu4e-compose-dont-reply-to-self t)
+
+(require 'org-mu4e)
+
+;; convert org mode to HTML automatically
+(setq org-mu4e-convert-to-html t)
+ 
+(setq mu4e-org-contacts-file  (expand-file-name "~/.emacs.d/contacts.org"))
+(add-to-list 'mu4e-headers-actions
+            '("org-contact-add" . mu4e-action-add-org-contact) t)
+(add-to-list 'mu4e-view-actions
+            '("org-contact-add" . mu4e-action-add-org-contact) t)
+
+;;from vxlabs config
+;; show full addresses in view message (instead of just names)
+;; toggle per name with M-RET
+(setq mu4e-view-show-addresses 't)
+
+;; don't ask when quitting
+(setq mu4e-confirm-quit nil)
+
+
+(require 'feedmail)
+
+;; mu4e-context
+(setq mu4e-context-policy 'pick-first)
+(setq mu4e-compose-context-policy 'always-ask)
+(setq mu4e-contexts
+     (list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Old Gmail ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(make-mu4e-context
+    :name "old-gmail" ;;for gmail-1
+    :enter-func (lambda () (mu4e-message "Entering context old-gmail"))
+    :leave-func (lambda () (mu4e-message "Leaving context old-gmail"))
+    :match-func (lambda (msg)
+                 (when msg
+                   (mu4e-message-contact-field-matches
+                    msg '(:from :to :cc :bcc) "gmail1@gmail.com")))
+    :vars '((user-mail-address . "gmail1@gmail.com")
+            (user-full-name . "Ryan")
+               (mu4e-sent-folder . "/gmail-1/[gmail1].Sent Mail")
+               (mu4e-drafts-folder . "/gmail-1/[gmail1].drafts")
+               (mu4e-trash-folder . "/gmail-1/[gmail1].Bin")
+               (mu4e-compose-signature . (concat "Formal Signature\n" "Emacs 25, org-mode 9, mu4e 1.0\n"))
+               (mu4e-compose-format-flowed . t)
+               (smtpmail-queue-dir . "~/.Maildir/gmail-1/queue/cur")
+
+               (setq message-sendmail-envelope-from 'header)
+               (Mu4e-maildir-shortcuts . ( ("/gmail-1/INBOX"            . ?i)
+                                           ("/gmail-1/[gmail1].Sent Mail" . ?s)
+                                           ("/gmail-1/[gmail1].Bin"       . ?t)
+                                            ("/gmail-1/[gmail1].All Mail"  . ?a)
+                                           ("/gmail-1/[gmail1].Starred"   . ?r)
+                                           ("/gmail-1/[gmail1].drafts"    . ?d)
+                                           ))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Private Mail ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+      (make-mu4e-context
+       :name "personal" ;;for personal-mail
+        :enter-func (lambda () (mu4e-message "Entering context personal"))
+        :leave-func (lambda () (mu4e-message "Leaving context personal"))
+
+        :match-func (lambda (msg)
+           (when msg
+         (mu4e-message-contact-field-matches
+          msg '(:from :to :cc :bcc) "personal@yoururl.urdomain")))
+        :vars '((user-mail-address . "personal@yoururl.urdomain")
+                (user-full-name . "Ryan")      (mu4e-sent-folder . "/personal-mail/[personal].Sent Mail")
+            (mu4e-drafts-folder . "/personal-mail/[personal].Drafts")
+            (mu4e-trash-folder . "/personal-mail/[personal].Trash")
+            (mu4e-compose-format-flowed . t)
+            (smtpmail-queue-dir . "~/.Maildir/personal-mail/queue/cur")
+            (mu4e-maildir-shortcuts . ( ("/personal-mail/INBOX"            . ?i)
+                     ("/personal-mail/[personal].Sent Mail" . ?s)
+                     ("/personal-mail/[personal].Trash"     . ?t)
+                     ("/personal-mail/[personal].Junk"      . ?j)
+                     ("/personal-mail/[personal].Drafts"    . ?d)
+                     ))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; New Gmail ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      (make-mu4e-context
+       :name "gmail" ;;for gmail-2
+       :enter-func (lambda () (mu4e-message "Entering context gmail"))
+       :leave-func (lambda () (mu4e-message "Leaving context gmail"))
+       :match-func (lambda (msg)
+                     (when msg
+                   (mu4e-message-contact-field-matches
+                    msg '(:from :to :cc :bcc) "gmail2@gmail.com")))
+       :vars '((user-mail-address . "gmail2@gmail.com")
+               (user-full-name . "Ryan")
+               (mu4e-sent-folder . "/gmail-2/[gmail2].Sent Mail")
+               (mu4e-drafts-folder . "/gmail-2/[gmail2].drafts")
+               (mu4e-trash-folder . "/gmail-2/[gmail2].Bin")
+               (mu4e-compose-signature . (concat "Formal Signature\n" "Emacs 25, org-mode 9, mu4e 1.0\n"))
+               (mu4e-compose-format-flowed . t)
+               (smtpmail-queue-dir . "~/.Maildir/gmail-2/queue/cur")
+               (setq message-sendmail-envelope-from 'header)
+               (mu4e-maildir-shortcuts . ( ("/gmail-2/INBOX"            . ?i)
+                                       ("/gmail-2/[gmail2].Sent Mail" . ?s)
+                                       ("/gmail-2/[gmail2].Bin"       . ?t)
+                                       ("/gmail-2/[gmail2].All Mail"  . ?a)
+                                       ("/gmail-2/[gmail2].Starred"   . ?r)
+                                       ("/gmail-2/[gmail2].drafts"    . ?d)
+                                                   ))))
+
+              ))
+
+;; Choose account label to feed msmtp -a option based on From header
+;; in Message buffer; This function must be added to
+;; message-send-mail-hook for on-the-fly change of From address before
+;; sending message since message-send-mail-hook is processed right
+;; before sending message.
+(defun choose-msmtp-account ()
+(if (message-mail-p)
+(save-excursion
+(let*
+   ((from (save-restriction
+        (message-narrow-to-headers)
+        (message-fetch-field "from")))
+    (account
+ (cond
+  ((string-match "gmail1@gmail.com" from) "gmail1")
+  ((string-match "personal@yoururl.urdomain" from) "personal")
+      ((string-match "gmail2@gmail.com" from) "gmail2"))))
+     (setq message-sendmail-extra-arguments (list '"-a" account))))))
+
+  
+(setq message-sendmail-envelope-from 'header)
+(setq message-send-mail-function 'message-send-mail-with-sendmail
+      sendmail-program "/usr/bin/msmtp"
+      user-full-name "Ryan")
+
+(setq message-sendmail-envelope-from 'header)
+(add-hook 'message-send-mail-hook 'choose-msmtp-account)
+
+(setq mu4e-html2text-command 'mu4e-shr2text) 
+#+END_SRC
+
+Obviously, you should replace gmail1 with your gmail, etc. etc. you know the drill by now. 
+
+Parts of this file also contain commented-out lines of configuration, and there are many ways you can customize your setup.
+All of the extra packages like mu4e-alert are completely optional, you can remove any of them at will.
+
+The bulk of this configuration file comes from [[https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/][~mu4e~ for dummies]], while the very handy function choose-msmtp-account
+comes from [[https://notanumber.io/2016-10-03/better-email-with-mu4e/][Better Email With ~mu4e~]].
+
+And that's it! Enjoy your newfound productivity. You're now once step closer to being free from big tech.
