@@ -1,6 +1,6 @@
 "file","link (leave as `none' if no link)","img path relative to the site root"
 "emacs","https://www.gnu.org/software/emacs/","./res/stickies/emacs.png"
 "gpl3","https://www.gnu.org/licenses/gpl-3.0.en.html","./res/stickies/gplv3.png"
-"sxemacs","http://www.sxemacs.org/","res/stickies/sxe.png"
+"sxemacs","https://www.sxemacs.org/","res/stickies/sxe.png"
 "xemacs","https://www.xemacs.org/","./res/stickies/xe.jpg"
 

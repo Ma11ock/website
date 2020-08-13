@@ -1,0 +1,11 @@
+#+TITLE: Maximal Anti-Glow-In-The-Dark Setup for Arch Linux With ZFS (part 2)
+#+AUTHOR: Ryan
+#+EMAIL: ryan@ryanmj.xyz
+#+OPTIONS: num:nil
+
+
+In the last part we created an Arch install for maximum safety, preventing any glow-in-the-darks from accessing your data. Now I'm gonna ruin it by installing proprietary software - namely Steam (bcuz I am bibeo game addict) and Discord (I hate myself).
+
+I am a sick man... I am a wicked man.
+
+To install Steam you have to enable multilib (just uncomment the lines in ~/etc/pacman.conf~). 

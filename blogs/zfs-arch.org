@@ -1,0 +1,20 @@
+#+TITLE: Maximal Anti-Glow-In-The-Dark Setup for Arch Linux With ZFS
+#+AUTHOR: Ryan
+#+EMAIL: ryan@ryanmj.xyz
+#+OPTIONS: num:nil
+
+NOTES: For some unholy reason you cannot set dnodesize to anything other than legacy.
+
+NOTES2: Make you enable the systemd service or the volumes will not mount!!!!
+
+In this post I will show you how to set up an Arch Linux install with ZFS as the root filesystem.
+
+I'm not going to go over why you'd want to do this, if you're here you probably have your own reasons.
+
+
+* The ISO
+Unless you live in the future where ZFS has been re-released under the GPL then ZFS is not an official
+part of the Linux project it is not included in the normal Arch Linux kernel package (or the normal install ISO).
+As a result, it is necessary to create our own install ISO.
+
+If you don't run Arch Linux 

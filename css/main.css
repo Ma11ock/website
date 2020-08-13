@@ -7,6 +7,11 @@ table {
     justify-content: left;
 }
 
+h5 {
+    color: #fff;
+    font-size: 1.1em;
+}
+
 code {
     font-size: 1em;
 }
@@ -23,8 +28,6 @@ code {
 pre {
     color: #00FFFF;
 }
-
-
 
 .blogpreview {
     border: 0.2em solid #00FF7F;
@@ -58,11 +61,6 @@ tr td:nth-of-type(2) {
     margin-left: 0.2em;
     float:left;
     width: 80%
-}
-
-
-.wrap {
-    opacity-background: 0.0;
 }
 
 
@@ -115,9 +113,9 @@ tr td:nth-of-type(2) {
 body {
     font-family: Inconsolata, "Courier New", monospace;
     -webkit-font-smoothing : none;
-    font-smooth: never;
     background-color: #C8C8C8;
     background-image: url("../res/ui-back.png");
+    -moz-font-smoothing: never;
 }
 
 h1 {
@@ -145,7 +143,7 @@ h3 {
 p {
     color: #fff;
     font-size: 16pt;
-    font-smooth: never;
+    -moz-font-smoothing: never;
 }
 
 .headpar {
@@ -205,8 +203,8 @@ hr.vertical {
 }
 
 .fttr {
-    margin-top: 0 auto;
-    margin: 0 auto;
+    margin-top: auto;
+    margin: auto;
     margin-top: 75px;
     width: 75%;
 }
@@ -229,7 +227,6 @@ ul li {
     text-align: center;
     margin: auto;
     max-width: 700px;
-    background-color: var(--color256);
     padding: 5px;
     border-radius: 10px;
 }
@@ -250,6 +247,3 @@ a:hover img {
     display: inline;
 }
 
-.ebar .modded {
-    text-justify: right;
-}

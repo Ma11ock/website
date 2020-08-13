@@ -1,0 +1,1117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-07-01 Wed 17:06 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mailmacs: Email within Emacs With <code>mu4e</code>, <code>msmtp</code>, <code>gnome-keyring</code>, and <code>mbsync</code>.</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Ryan" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Mailmacs: Email within Emacs With <code>mu4e</code>, <code>msmtp</code>, <code>gnome-keyring</code>, and <code>mbsync</code>.</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org52df86e">Getting everything you need:</a>
+<ul>
+<li><a href="#org9d8c21c">On Arch Linux:</a></li>
+<li><a href="#org7080a47">On Debian</a></li>
+</ul>
+</li>
+<li><a href="#orgb57d05f">Prepping Your Email</a>
+<ul>
+<li><a href="#org2bb70a1">Gmail</a></li>
+<li><a href="#org759c87f">Personal Email Server</a></li>
+</ul>
+</li>
+<li><a href="#org95e36a3"><code>mbsync</code></a></li>
+<li><a href="#orge8bd333"><code>mu</code></a></li>
+<li><a href="#org360adca"><code>msmtp</code></a></li>
+<li><a href="#org74e24d5">Bringing it all together with <code>mu4e</code></a></li>
+</ul>
+</div>
+</div>
+<p>
+In this post you will learn how to set up and configure <code>mbsync</code>, <code>msmtp</code>, mu with <code>mu4e</code> on Linux (debian-based and Arch-based).
+</p>
+
+<p>
+There are many guides on the internet on how to set up <code>mu4e</code>, but here, I aim at the best, most complex configuration possible.
+There are lots of moving parts that need to be perfectly in-sync in order to get this done properly. It is a PITA if you are a beginner.
+This post is essentially an amalgamation of the best aspects of other guides I found, which I will link to throughout the post and at the
+bottom of the article.
+</p>
+
+<p>
+The final configuration will have <code>mbsync</code> as the mailbox synchronizer, <code>mu</code> as the indexer, <code>mu4e</code> as the mail client, <code>msmtp</code> as the smtp client, 
+and <code>gnome-keyring</code> as a password manager.
+</p>
+
+<div id="outline-container-org52df86e" class="outline-2">
+<h2 id="org52df86e">Getting everything you need:</h2>
+<div class="outline-text-2" id="text-org52df86e">
+<p>
+Obviously you will need to have Emacs installed and set up as a system daemon using <code>emacsclient</code>. 
+Read <a href="https://www.emacswiki.org/emacs/EmacsAsDaemon">this article</a> to learn how to set this up if you haven't already.
+</p>
+</div>
+<div id="outline-container-org9d8c21c" class="outline-3">
+<h3 id="org9d8c21c">On Arch Linux:</h3>
+<div class="outline-text-3" id="text-org9d8c21c">
+<div class="org-src-container">
+<pre class="src src-sh">sudo pacman -Syu msmtp msmtp-mta isync gnome-keyring libsecret seahorse
+</pre>
+</div>
+
+<p>
+You will also need the package <code>mu</code> from the AUR.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7080a47" class="outline-3">
+<h3 id="org7080a47">On Debian</h3>
+<div class="outline-text-3" id="text-org7080a47">
+<div class="org-src-container">
+<pre class="src src-sh">sudo apt-get update &amp;&amp; sudo apt-get upgrade
+sudo apt-get install mu4e isync msmtp msmtp-gnome gnome-keyring libsecret-tools seahorse libsecret-1-dev maildirutils
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb57d05f" class="outline-2">
+<h2 id="orgb57d05f">Prepping Your Email</h2>
+<div class="outline-text-2" id="text-orgb57d05f">
+</div>
+<div id="outline-container-org2bb70a1" class="outline-3">
+<h3 id="org2bb70a1">Gmail</h3>
+<div class="outline-text-3" id="text-org2bb70a1">
+<p>
+If you're a technically minded person in &lt;current year&gt; you shoulnd't be using Gmail if you have a choice (or G©©gle in general). 
+Get a cheap xyz domain, a VPS, and set up a mail server. That being said, many people don't have a choice, or are like me and have 
+their old gmail attached to too many accounts across the internet.
+</p>
+
+<p>
+In order to download your Email so it can be used by Emacs you must first <a href="https://support.google.com/mail/answer/7126229">enable IMAP support</a>.
+If you have two factor authentication (which you should), you will also need to <a href="https://support.google.com/accounts/answer/185833?hl=en">create an app password</a>. Copy your password to the clipboard.
+</p>
+</div>
+</div>
+<div id="outline-container-org759c87f" class="outline-3">
+<h3 id="org759c87f">Personal Email Server</h3>
+<div class="outline-text-3" id="text-org759c87f">
+<p>
+If you're like me and you just set up your own personal email server with the help of <a href="https://www.youtube.com/watch?v=9zP7qooM4pY&amp;t=179s">Luke Smith's guide</a> then you're set to go. However, 
+this information from his github will be very  relevant to you:
+</p>
+<blockquote>
+<p>
+Let's say you want to access your mail with Thunderbird or mutt or another email program. For my domain, the server information will be as follows:
+</p>
+
+<p>
+SMTP server: mail.lukesmith.xyz
+SMTP port: 587
+IMAP server: mail.lukesmith.xyz
+IMAP port: 993
+Username luke (I.e. not luke@lukesmith.xyz)
+</p>
+
+<p>
+The last point is important. Many email systems use a full email address on login. Since we just simply use local PAM logins, only the user's name is used (this makes a difference if you're using my mutt-wizard, etc.).
+</p>
+</blockquote>
+</div>
+</div>
+</div>
+<div id="outline-container-org95e36a3" class="outline-2">
+<h2 id="org95e36a3"><code>mbsync</code></h2>
+<div class="outline-text-2" id="text-org95e36a3">
+<ul class="org-ul">
+<li>Note taken on <span class="timestamp-wrapper"><span class="timestamp">[2020-06-30 Tue 18:09]</span></span></li>
+<li>Create a directory <code>~/.Maildir</code> (or really, you can name it whatever you want).</li>
+<li>Open a file called <code>~/.mbsyncrc</code> and paste this into it:</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-conf"><span style="color: #a8a8a8;">##############################################################################</span>
+<span style="color: #a8a8a8;">#                                 </span><span style="color: #a8a8a8;">First Gmail                                #</span>
+<span style="color: #a8a8a8;">##############################################################################</span>
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">mbsyncrc based on</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">http://www.ict4g.net/adolfo/notes/2014/12/27/EmacsIMAP.html</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">ACCOUNT INFORMATION</span>
+IMAPAccount gmail-1
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">Address to connect to</span>
+Host imap.gmail.com
+User gmail1@gmail.com
+PassCmd <span style="color: #72a4ff;">"secret-tool lookup host imap.gmail.com user gmail1@gmail.com"</span>
+AuthMechs LOGIN
+SSLType IMAPS
+SSLVersions TLSv1.2
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">THEN WE SPECIFY THE LOCAL AND REMOTE STORAGE</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">- THE REMOTE STORAGE IS WHERE WE GET THE MAIL FROM (E.G., THE</span>
+<span style="color: #a8a8a8;">#   </span><span style="color: #a8a8a8;">SPECIFICATION OF AN IMAP ACCOUNT)</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">- THE LOCAL STORAGE IS WHERE WE STORE THE EMAIL ON OUR COMPUTER</span>
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">REMOTE STORAGE (USE THE IMAP ACCOUNT SPECIFIED ABOVE)</span>
+IMAPStore gmail-1-remote
+Account gmail-1
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">LOCAL STORAGE (CREATE DIRECTORIES with mkdir -p ~/.Maildir/gmail-1)</span>
+MaildirStore gmail-1-local
+Path ~/.Maildir/gmail-1/
+Inbox ~/.Maildir/gmail-1/INBOX
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">REQUIRED ONLY IF YOU WANT TO DOWNLOAD ALL SUBFOLDERS; SYNCING SLOWS DOWN</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">SubFolders Verbatim</span>
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">CONNECTIONS SPECIFY LINKS BETWEEN REMOTE AND LOCAL FOLDERS</span>
+<span style="color: #a8a8a8;">#</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">CONNECTIONS ARE SPECIFIED USING PATTERNS, WHICH MATCH REMOTE MAIl</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">FOLDERS. SOME COMMONLY USED PATTERS INCLUDE:</span>
+<span style="color: #a8a8a8;">#</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">1 "*" TO MATCH EVERYTHING</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">2 "!DIR" TO EXCLUDE "DIR"</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">3 "DIR" TO MATCH DIR</span>
+
+Channel gmail-1-inbox
+Master :gmail-1-remote:
+Slave :gmail-1-local:
+Patterns <span style="color: #72a4ff;">"INBOX"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel gmail-1-trash
+Master :gmail-1-remote:<span style="color: #72a4ff;">"[Gmail]/Trash"</span>
+Slave :gmail-1-local:<span style="color: #72a4ff;">"[gmail1].Trash"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel gmail-1-sent
+Master :gmail-1-remote:<span style="color: #72a4ff;">"[Gmail]/Sent Mail"</span>
+Slave :gmail-1-local:<span style="color: #72a4ff;">"[gmail1].Sent Mail"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel gmail-1-all
+Master :gmail-1-remote:<span style="color: #72a4ff;">"[Gmail]/All Mail"</span>
+Slave :gmail-1-local:<span style="color: #72a4ff;">"[gmail1].All Mail"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel gmail-1-starred
+Master :gmail-1-remote:<span style="color: #72a4ff;">"[Gmail]/Starred"</span>
+Slave :gmail-1-local:<span style="color: #72a4ff;">"[gmail1].Starred"</span>
+Create Both
+Expunge Both
+SyncState *
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">GROUPS PUT TOGETHER CHANNELS, SO THAT WE CAN INVOKE</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">MBSYNC ON A GROUP TO SYNC ALL CHANNELS</span>
+<span style="color: #a8a8a8;">#</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">FOR INSTANCE: "mbsync gmail" GETS MAIL FROM</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">"gmail-inbox", "gmail-sent", and "gmail-trash"</span>
+<span style="color: #a8a8a8;">#</span>
+Group gmail-1
+Channel gmail-1-inbox
+Channel gmail-1-sent
+Channel gmail-1-trash
+Channel gmail-1-all
+Channel gmail-1-starred
+
+
+<span style="color: #a8a8a8;">##############################################################################</span>
+<span style="color: #a8a8a8;">#                                 </span><span style="color: #a8a8a8;">Second Gmail                               #</span>
+<span style="color: #a8a8a8;">##############################################################################</span>
+
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">ACCOUNT INFORMATION</span>
+IMAPAccount gmail-2
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">Address to connect to</span>
+Host imap.gmail.com
+User gmail2@gmail.com
+PassCmd <span style="color: #72a4ff;">"secret-tool lookup host imap.gmail.com user gmail2@gmail.com"</span>
+AuthMechs LOGIN
+SSLType IMAPS
+SSLVersions TLSv1.2
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">THEN WE SPECIFY THE LOCAL AND REMOTE STORAGE</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">- THE REMOTE STORAGE IS WHERE WE GET THE MAIL FROM (E.G., THE</span>
+<span style="color: #a8a8a8;">#   </span><span style="color: #a8a8a8;">SPECIFICATION OF AN IMAP ACCOUNT)</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">- THE LOCAL STORAGE IS WHERE WE STORE THE EMAIL ON OUR COMPUTER</span>
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">REMOTE STORAGE (USE THE IMAP ACCOUNT SPECIFIED ABOVE)</span>
+IMAPStore gmail-2-remote
+Account gmail-2
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">LOCAL STORAGE (CREATE DIRECTORIES with mkdir -p ~/Maildir/gmail-2)</span>
+MaildirStore gmail-2-local
+Path ~/.Maildir/gmail-2/
+Inbox ~/.Maildir/gmail-2/INBOX
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">CONNECTIONS SPECIFY LINKS BETWEEN REMOTE AND LOCAL FOLDERS</span>
+<span style="color: #a8a8a8;">#</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">CONNECTIONS ARE SPECIFIED USING PATTERNS, WHICH MATCH REMOTE MAIl</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">FOLDERS. SOME COMMONLY USED PATTERS INCLUDE:</span>
+<span style="color: #a8a8a8;">#</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">1 "*" TO MATCH EVERYTHING</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">2 "!DIR" TO EXCLUDE "DIR"</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">3 "DIR" TO MATCH DIR</span>
+
+Channel gmail-2-inbox
+Master :gmail-2-remote:
+Slave :gmail-2-local:
+Patterns <span style="color: #72a4ff;">"INBOX"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel gmail-2-trash
+Master :gmail-2-remote:<span style="color: #72a4ff;">"[Gmail]/Trash"</span>
+Slave :gmail-2-local:<span style="color: #72a4ff;">"[gmail2].Trash"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel gmail-2-sent
+Master :gmail-2-remote:<span style="color: #72a4ff;">"[Gmail]/Sent Mail"</span>
+Slave :gmail-2-local:<span style="color: #72a4ff;">"[gmail2].Sent Mail"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel gmail-2-all
+Master :gmail-2-remote:<span style="color: #72a4ff;">"[Gmail]/All Mail"</span>
+Slave :gmail-2-local:<span style="color: #72a4ff;">"[gmail2].All Mail"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel gmail-2-starred
+Master :gmail-2-remote:<span style="color: #72a4ff;">"[Gmail]/Starred"</span>
+Slave :gmail-2-local:<span style="color: #72a4ff;">"[gmail2].Starred"</span>
+Create Both
+Expunge Both
+SyncState *
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">GROUPS PUT TOGETHER CHANNELS, SO THAT WE CAN INVOKE</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">MBSYNC ON A GROUP TO SYNC ALL CHANNELS</span>
+<span style="color: #a8a8a8;">#</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">FOR INSTANCE: "mbsync gmail" GETS MAIL FROM</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">"gmail-inbox", "gmail-sent", and "gmail-trash"</span>
+<span style="color: #a8a8a8;">#</span>
+Group gmail-2
+Channel gmail-2-inbox
+Channel gmail-2-sent
+Channel gmail-2-trash
+Channel gmail-2-all
+Channel gmail-2-starred
+
+<span style="color: #a8a8a8;">################################################################################</span>
+<span style="color: #a8a8a8;">#                             </span><span style="color: #a8a8a8;">personal webserver                               #</span>
+<span style="color: #a8a8a8;">################################################################################</span>
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">mbsyncrc based on</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">http://www.ict4g.net/adolfo/notes/2014/12/27/EmacsIMAP.html</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">ACCOUNT INFORMATION</span>
+IMAPAccount personal-mail
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">Address to connect to</span>
+Host mail.personal-site.xyz
+User me
+PassCmd <span style="color: #72a4ff;">"secret-tool lookup host mail.personal.xyz user ryan"</span>
+AuthMechs LOGIN
+SSLType IMAPS
+SSLVersions TLSv1.2
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">THEN WE SPECIFY THE LOCAL AND REMOTE STORAGE</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">- THE REMOTE STORAGE IS WHERE WE GET THE MAIL FROM (E.G., THE</span>
+<span style="color: #a8a8a8;">#   </span><span style="color: #a8a8a8;">SPECIFICATION OF AN IMAP ACCOUNT)</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">- THE LOCAL STORAGE IS WHERE WE STORE THE EMAIL ON OUR COMPUTER</span>
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">REMOTE STORAGE (USE THE IMAP ACCOUNT SPECIFIED ABOVE)</span>
+IMAPStore personal-mail
+Account personal-mail
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">LOCAL STORAGE (CREATE DIRECTORIES with mkdir -p ~/Maildir/gmail-1)</span>
+MaildirStore personal-mail-local
+Path ~/.Maildir/personal-mail/
+Inbox ~/.Maildir/personal-mail/INBOX
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">REQUIRED ONLY IF YOU WANT TO DOWNLOAD ALL SUBFOLDERS; SYNCING SLOWS DOWN</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">SubFolders Verbatim</span>
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">CONNECTIONS SPECIFY LINKS BETWEEN REMOTE AND LOCAL FOLDERS</span>
+<span style="color: #a8a8a8;">#</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">CONNECTIONS ARE SPECIFIED USING PATTERNS, WHICH MATCH REMOTE MAIl</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">FOLDERS. SOME COMMONLY USED PATTERS INCLUDE:</span>
+<span style="color: #a8a8a8;">#</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">1 "*" TO MATCH EVERYTHING</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">2 "!DIR" TO EXCLUDE "DIR"</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">3 "DIR" TO MATCH DIR</span>
+
+Channel personal-mail-inbox
+Master :personal-mail:
+Slave :personal-mail-local:
+Patterns <span style="color: #72a4ff;">"INBOX"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel personal-mail-trash
+Master :personal-mail:<span style="color: #72a4ff;">"Trash"</span>
+Slave :personal-mail-local:<span style="color: #72a4ff;">"[personal].Trash"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel personal-mail-sent
+Master :personal-mail:<span style="color: #72a4ff;">"Sent"</span>
+Slave :personal-mail-local:<span style="color: #72a4ff;">"[personal].Sent Mail"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel personal-mail-junk
+Master :personal-mail:<span style="color: #72a4ff;">"Junk"</span>
+Slave :personal-mail-local:<span style="color: #72a4ff;">"[personal].Junk"</span>
+Create Both
+Expunge Both
+SyncState *
+
+Channel personal-mail-drafts
+Master :personal-mail:<span style="color: #72a4ff;">"Drafts"</span>
+Slave :personal-mail-local:<span style="color: #72a4ff;">"[personal].Drafts"</span>
+Create Both
+Expunge Both
+SyncState *
+
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">GROUPS PUT TOGETHER CHANNELS, SO THAT WE CAN INVOKE</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">MBSYNC ON A GROUP TO SYNC ALL CHANNELS</span>
+<span style="color: #a8a8a8;">#</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">FOR INSTANCE: "mbsync gmail" GETS MAIL FROM</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">"gmail-inbox", "gmail-sent", and "gmail-trash"</span>
+<span style="color: #a8a8a8;">#</span>
+Group personal-mail
+Channel personal-mail-inbox
+Channel personal-mail-sent
+Channel personal-mail-trash
+Channel personal-mail-junk
+Channel personal-mail-drafts    
+</pre>
+</div>
+<p>
+Replace <code>gmail-1</code>, <code>gmail-2</code>, and <code>personal-mail</code> with arbitrary names of your choosing 
+(make sure to also change the names in the slave/mail local sections as well.) If you named
+your Maildir anything other than <code>~/.Maildir</code> then make sure you change the paths as well!
+</p>
+
+<p>
+Note for Mac users: the crt file paths might not be accurate.
+</p>
+
+<ol class="org-ol">
+<li>Set up the passwords.</li>
+</ol>
+<p>
+We will be using gnome-keyring and libsecret for our passwords. For Gmail, run the command below (while inserting your username), 
+and paste the app password you got from google as a response.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">secret-tool store --label=isync host imap.gmail.com service mbsync user yourusername@gmail.com
+</pre>
+</div>
+<p>
+You can verify that it worked with the following:
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">secret-tool lookup host imap.gmail.com user yourusername@gmail.com
+</pre>
+</div>
+<p>
+Or, you could use the graphical password manager <code>seahorse</code> to verify the password.
+</p>
+
+<p>
+For your personal mail server the same information applies, except you should replace <code>imap.gmail.com</code> with <code>mail.yoururl.urdomain</code>,
+and replace the gmail address with <b>JUST</b> your username, no <code>@yoururl.urdomain</code>. For example, my email is ryan@ryanmj.xyz, so my 
+username is just <code>ryan</code>.
+</p>
+
+<p>
+Lastly, we need to create the subdirectories in the Maildir. The mbsyncrc file will be your guide. 
+You need to create one subdirectory for each email you have. Mine would have <code>gmail-1/</code> <code>gmail-2/</code> and <code>personal-mail/</code>.
+Replace those names with the names associated with the <code>IMAPAccount</code> label in your mbsyncrc. 
+Next, we must create the `slave' folders. If <code>gmail-1</code> has an <code>All Mail</code> slave channel, then create <code>gmail-1/[gmail1].All Mail/</code>.
+</p>
+
+<p>
+Example Maildir:
+</p>
+<pre class="example">
+In ~/.Maildir/
+gmail-1/INBOX
+gmail-1/[gmail1].All Mail
+gmail-1/[gmail1].bin
+gmail-1/[gmail1].Bin
+gmail-1/[gmail1].drafts
+gmail-1/[gmail1].Sent Mail
+gmail-1/[gmail1].Starred
+gmail-1/[gmail1].Trash
+gmail-1/queue
+
+gmail-2/INBOX
+gmail-2/queue
+gmail-2/[gmail2].All Mail
+gmail-2/[gmail2].bin
+gmail-2/[gmail2].Bin
+gmail-2/[gmail2].drafts
+gmail-2/[gmail2].Sent Mail
+gmail-2/[gmail2].Starred
+gmail-2/[gmail2].Trash
+
+personal-mail/INBOX
+personal-mail/[personal].Drafts
+personal-mail/[personal].Junk
+personal-mail/[personal].Sent Mail
+personal-mail/[personal].Trash
+</pre>
+
+
+<p>
+Once that business is finished, you can finally run mbsync! Just:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">mbsync -a
+</pre>
+</div>
+
+<p>
+If it begins to work at first but then suddenly fails: don't freak out! If you're downloading a lot of mail you might have just 
+reached a bandwidth limit. Just try again later!
+</p>
+</div>
+</div>
+<div id="outline-container-orge8bd333" class="outline-2">
+<h2 id="orge8bd333"><code>mu</code></h2>
+<div class="outline-text-2" id="text-orge8bd333">
+<p>
+To set up mu:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">mu init -m ~/.Maildir
+</pre>
+</div>
+<p>
+Replace <code>~/.Maildir</code> with the location of your Maildir.
+</p>
+</div>
+</div>
+<div id="outline-container-org360adca" class="outline-2">
+<h2 id="org360adca"><code>msmtp</code></h2>
+<div class="outline-text-2" id="text-org360adca">
+<div class="org-src-container">
+<pre class="src src-conf">account gmail1
+host smtp.gmail.com
+port 587
+protocol smtp
+auth on
+from gmail1@gmail.com
+user gmail1@gmail.com
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">msmtp does not support OAuth, so instead you will have to use user/pass. If you don't have</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">two factor auth enabled, enabling insecure apps to access your email should be sufficient and</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">you can use your normal password, but if you do have it enabled you will need to generate an</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">app password. See the comments in the offlineimap config for details.</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">Once again I'm using `security` to pull the password from my macOS keychain.</span>
+<span style="color: #a8a8a8;">#</span><span style="color: #a8a8a8;">passwordeval security find-internet-password -g -a nan@nine27.com -s smtp.gmail.com -w</span>
+tls on
+tls_starttls on
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">If you don't have this cert, you can generate it by `brew install curl` and then running</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">`/usr/local/Cellar/curl/&lt;curl version&gt;/libexec/mk-ca-bundle.pl`</span>
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+account gmail2
+host smtp.gmail.com
+port 587
+protocol smtp
+auth on
+from gmail2@gmail.com
+user gmail2@gmail.com
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">msmtp does not support OAuth, so instead you will have to use user/pass. If you don't have</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">two factor auth enabled, enabling insecure apps to access your email should be sufficient and</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">you can use your normal password, but if you do have it enabled you will need to generate an</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">app password. See the comments in the offlineimap config for details.</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">Once again I'm using `security` to pull the password from my macOS keychain.</span>
+<span style="color: #a8a8a8;">#</span><span style="color: #a8a8a8;">passwordeval security find-internet-password -g -a nan@nine27.com -s smtp.gmail.com -w</span>
+tls on
+tls_starttls on
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">If you don't have this cert, you can generate it by `brew install curl` and then running</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">`/usr/local/Cellar/curl/&lt;curl version&gt;/libexec/mk-ca-bundle.pl`</span>
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">account do</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">host smtp.gmail.com</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">port 587</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">protocol smtp</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">auth on</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">from nzhong@digitalocean.com</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">user nzhong@digitalocean.com</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">passwordeval security find-internet-password -g -a nzhong@digitalocean.com -s smtp.gmail.com -w</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">tls on</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">tls_trust_file ~/.msmtp/ca-bundle.crt</span>
+
+account personal
+host mail.yoururl.urdomain
+port 587
+protocol smtp
+auth plain
+from personal@yoururl.urdomain
+user personal
+
+tls on
+tls_starttls on
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">If you don't have this cert, you can generate it by `brew install curl` and then running</span>
+<span style="color: #a8a8a8;"># </span><span style="color: #a8a8a8;">`/usr/local/Cellar/curl/&lt;curl version&gt;/libexec/mk-ca-bundle.pl`</span>
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+
+</pre>
+</div>
+<p>
+Once again Mac users will have to watch those crt file paths.
+</p>
+</div>
+</div>
+<div id="outline-container-org74e24d5" class="outline-2">
+<h2 id="org74e24d5">Bringing it all together with <code>mu4e</code></h2>
+<div class="outline-text-2" id="text-org74e24d5">
+<p>
+Step 1. Find the location of mu4e. Your distro likely put it in <code>/usr/share/emacs/site-lisp/mu4e/</code> or <code>/usr/local/share/emacs/site-lisp/mu4e/</code>
+</p>
+
+<p>
+Step 2. In Emacs, install the packages:
+</p>
+<pre class="example">
+mu4e-alert mu4e-conversation mu4e-jump-to-list mu4e-maildirs-extension mu4e-overview mu4e-query-fragments
+</pre>
+
+<p>
+Step 3. Append this to your emacs config file:
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">require</span> '<span style="color: #00bdfa;">mu4e-alert</span><span style="color: #00cd68;">)</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">Choose the style you prefer for desktop notifications</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">If you are on Linux you can use</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">1. notifications - Emacs lisp implementation of the Desktop Notifications API</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">2. libnotify     - Notifications using the `</span><span style="color: #00bdfa;">notify-send</span><span style="color: #a8a8a8;">' program, requires `</span><span style="color: #00bdfa;">notify-send</span><span style="color: #a8a8a8;">' to be in PATH</span>
+<span style="color: #a8a8a8;">;;</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">On Mac OSX you can set style to</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">1. notifier      - Notifications using the `</span><span style="color: #00bdfa;">terminal-notifier</span><span style="color: #a8a8a8;">' program, requires `</span><span style="color: #00bdfa;">terminal-notifier</span><span style="color: #a8a8a8;">' to be in PATH</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">1. growl         - Notifications using the `</span><span style="color: #00bdfa;">growl</span><span style="color: #a8a8a8;">' program, requires `</span><span style="color: #00bdfa;">growlnotify</span><span style="color: #a8a8a8;">' to be in PATH</span>
+<span style="color: #00cd68;">(</span>mu4e-alert-set-default-style 'libnotify<span style="color: #00cd68;">)</span>
+<span style="color: #00cd68;">(</span>add-hook 'after-init-hook #'mu4e-alert-enable-notifications<span style="color: #00cd68;">)</span>
+
+<span style="color: #00cd68;">(</span>add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display<span style="color: #00cd68;">)</span> <span style="color: #a8a8a8;">; </span><span style="color: #a8a8a8;">show unread email count on mode line</span>
+
+<span style="color: #00cd68;">(</span>mu4e-alert-enable-notifications<span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">mu4e-conversation: comines threads into a single buffer</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">require</span> '<span style="color: #00bdfa;">mu4e-conversation</span><span style="color: #00cd68;">)</span>
+<span style="color: #00cd68;">(</span>global-mu4e-conversation-mode<span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">allows users to jump to mailing lists</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">require</span> '<span style="color: #00bdfa;">mu4e-jump-to-list</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">Asynchronously update all emails in Maildir</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">require</span> '<span style="color: #00bdfa;">mu4e-maildirs-extension</span><span style="color: #00cd68;">)</span>
+<span style="color: #00cd68;">(</span>mu4e-maildirs-extension<span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">allows you to see an overview of your maildir</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">require</span> '<span style="color: #00bdfa;">mu4e-overview</span><span style="color: #00cd68;">)</span>
+
+
+
+<span style="color: #00cd68;">(</span>add-to-list 'load-path <span style="color: #72a4ff;">"/usr/share/emacs/site-lisp/mu4e/"</span><span style="color: #00cd68;">)</span> <span style="color: #a8a8a8;">; </span><span style="color: #a8a8a8;">change this to accommodate your path</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">require</span> '<span style="color: #00bdfa;">mu4e</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-maildir <span style="color: #b6a0ff;">(</span>expand-file-name <span style="color: #72a4ff;">"~/.Maildir"</span><span style="color: #b6a0ff;">)</span><span style="color: #00cd68;">)</span>
+
+                                       <span style="color: #a8a8a8;">; </span><span style="color: #a8a8a8;">get mail</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-get-mail-command <span style="color: #72a4ff;">"mbsync -a"</span>
+     <span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">mu4e-html2text-command "w3m -T text/html" ;;using the default mu4e-shr2text</span>
+     mu4e-view-prefer-html t
+     mu4e-update-interval 300
+     mu4e-headers-auto-update t
+     mu4e-compose-signature-auto-include nil
+     mu4e-compose-format-flowed t<span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">to view selected message in the browser, no signin, just html mail</span>
+<span style="color: #00cd68;">(</span>add-to-list 'mu4e-view-actions
+            '<span style="color: #b6a0ff;">(</span><span style="color: #72a4ff;">"ViewInBrowser"</span> . mu4e-action-view-in-browser<span style="color: #b6a0ff;">)</span> t<span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">enable inline images</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-view-show-images t<span style="color: #00cd68;">)</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">use imagemagick, if available</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">when</span> <span style="color: #b6a0ff;">(</span>fboundp 'imagemagick-register-types<span style="color: #b6a0ff;">)</span>
+ <span style="color: #b6a0ff;">(</span>imagemagick-register-types<span style="color: #b6a0ff;">)</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">every new email composition gets its own frame!</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-compose-in-new-frame t<span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">don't save message to Sent Messages, IMAP takes care of this</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-sent-messages-behavior 'delete<span style="color: #00cd68;">)</span>
+
+<span style="color: #00cd68;">(</span>add-hook 'mu4e-view-mode-hook #'visual-line-mode<span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">(defun my-render-html-message ()</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">(let ((dom (libxml-parse-html-region (point-min) (point-max))))</span>
+<span style="color: #a8a8a8;">;;   </span><span style="color: #a8a8a8;">(erase-buffer)</span>
+<span style="color: #a8a8a8;">;;   </span><span style="color: #a8a8a8;">(shr-insert-document dom)</span>
+<span style="color: #a8a8a8;">;;   </span><span style="color: #a8a8a8;">(goto-char (point-min))))</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">(setq mu4e-html2text-command 'my-render-html-message)</span>
+
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">&lt;tab&gt; to navigate to links, &lt;RET&gt; to open them in browser</span>
+<span style="color: #00cd68;">(</span>add-hook 'mu4e-view-mode-hook
+         <span style="color: #b6a0ff;">(</span><span style="color: #b6a0ff;">lambda</span><span style="color: #6ae4b9;">()</span>
+           <span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">try to emulate some of the eww key-bindings</span>
+           <span style="color: #6ae4b9;">(</span>local-set-key <span style="color: #f0ce43;">(</span>kbd <span style="color: #72a4ff;">"&lt;RET&gt;"</span><span style="color: #f0ce43;">)</span> 'mu4e~view-browse-url-from-binding<span style="color: #6ae4b9;">)</span>
+           <span style="color: #6ae4b9;">(</span>local-set-key <span style="color: #f0ce43;">(</span>kbd <span style="color: #72a4ff;">"&lt;tab&gt;"</span><span style="color: #f0ce43;">)</span> 'shr-next-link<span style="color: #6ae4b9;">)</span>
+           <span style="color: #6ae4b9;">(</span>local-set-key <span style="color: #f0ce43;">(</span>kbd <span style="color: #72a4ff;">"&lt;backtab&gt;"</span><span style="color: #f0ce43;">)</span> 'shr-previous-link<span style="color: #6ae4b9;">)</span><span style="color: #b6a0ff;">)</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">from https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/elgoumx</span>
+<span style="color: #00cd68;">(</span>add-hook 'mu4e-headers-mode-hook
+         <span style="color: #b6a0ff;">(</span><span style="color: #b6a0ff;">defun</span> <span style="color: #feacd0;">my/mu4e-change-headers</span> <span style="color: #6ae4b9;">()</span>
+           <span style="color: #6ae4b9;">(</span><span style="color: #b6a0ff;">interactive</span><span style="color: #6ae4b9;">)</span>
+           <span style="color: #6ae4b9;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-headers-fields
+                 `<span style="color: #f0ce43;">(</span><span style="color: #00bdfa;">(</span><span style="color: #f78fe7;">:human-date</span> . 25<span style="color: #00bdfa;">)</span> <span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">alternatively, use :date</span>
+                   <span style="color: #00bdfa;">(</span><span style="color: #f78fe7;">:flags</span> . 6<span style="color: #00bdfa;">)</span>
+                   <span style="color: #00bdfa;">(</span><span style="color: #f78fe7;">:from</span> . 22<span style="color: #00bdfa;">)</span>
+                   <span style="color: #00bdfa;">(</span><span style="color: #f78fe7;">:thread-subject</span> . ,<span style="color: #80d200;">(</span>- <span style="color: #f78fe7;">(</span>window-body-width<span style="color: #f78fe7;">)</span> 70<span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span> <span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">alternatively, use :subject</span>
+                   <span style="color: #00bdfa;">(</span><span style="color: #f78fe7;">:size</span> . 7<span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span><span style="color: #6ae4b9;">)</span><span style="color: #b6a0ff;">)</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">if you use date instead of human-date in the above, use this setting</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">give me ISO(ish) format date-time stamps in the header list</span>
+<span style="color: #a8a8a8;">;</span><span style="color: #a8a8a8;">(setq mu4e-headers-date-format "%Y-%m-%d %H:%M")</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">spell check</span>
+<span style="color: #00cd68;">(</span>add-hook 'mu4e-compose-mode-hook
+         <span style="color: #b6a0ff;">(</span><span style="color: #b6a0ff;">defun</span> <span style="color: #feacd0;">my-do-compose-stuff</span> <span style="color: #6ae4b9;">()</span>
+           <span style="color: #c6eaff;">"My settings for message composition."</span>
+           <span style="color: #6ae4b9;">(</span>visual-line-mode<span style="color: #6ae4b9;">)</span>
+                                        <span style="color: #a8a8a8;">;</span><span style="color: #a8a8a8;">(org-mu4e-compose-org-mode)</span>
+           <span style="color: #6ae4b9;">(</span>use-hard-newlines -1<span style="color: #6ae4b9;">)</span>
+           <span style="color: #6ae4b9;">(</span>flyspell-mode<span style="color: #6ae4b9;">)</span><span style="color: #b6a0ff;">)</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;;</span><span style="color: #a8a8a8;">rename files when moving</span>
+<span style="color: #a8a8a8;">;;</span><span style="color: #a8a8a8;">NEEDED FOR MBSYNC</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-change-filenames-when-moving t<span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;;</span><span style="color: #a8a8a8;">set up queue for offline email</span>
+<span style="color: #a8a8a8;">;;</span><span style="color: #a8a8a8;">use mu mkdir  ~/.Maildir/acc/queue to set up first</span>
+
+<span style="color: #a8a8a8;">;;</span><span style="color: #a8a8a8;">from the info manual</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-attachment-dir  <span style="color: #72a4ff;">"~/Downloads"</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> message-kill-buffer-on-exit t<span style="color: #00cd68;">)</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-compose-dont-reply-to-self t<span style="color: #00cd68;">)</span>
+
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">require</span> '<span style="color: #00bdfa;">org-mu4e</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">convert org mode to HTML automatically</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> org-mu4e-convert-to-html t<span style="color: #00cd68;">)</span>
+
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-org-contacts-file  <span style="color: #b6a0ff;">(</span>expand-file-name <span style="color: #72a4ff;">"~/.emacs.d/contacts.org"</span><span style="color: #b6a0ff;">)</span><span style="color: #00cd68;">)</span>
+<span style="color: #00cd68;">(</span>add-to-list 'mu4e-headers-actions
+            '<span style="color: #b6a0ff;">(</span><span style="color: #72a4ff;">"org-contact-add"</span> . mu4e-action-add-org-contact<span style="color: #b6a0ff;">)</span> t<span style="color: #00cd68;">)</span>
+<span style="color: #00cd68;">(</span>add-to-list 'mu4e-view-actions
+            '<span style="color: #b6a0ff;">(</span><span style="color: #72a4ff;">"org-contact-add"</span> . mu4e-action-add-org-contact<span style="color: #b6a0ff;">)</span> t<span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;;</span><span style="color: #a8a8a8;">from vxlabs config</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">show full addresses in view message (instead of just names)</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">toggle per name with M-RET</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-view-show-addresses 't<span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">don't ask when quitting</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-confirm-quit nil<span style="color: #00cd68;">)</span>
+
+
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">require</span> '<span style="color: #00bdfa;">feedmail</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">mu4e-context</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-context-policy 'pick-first<span style="color: #00cd68;">)</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-compose-context-policy 'always-ask<span style="color: #00cd68;">)</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-contexts
+     <span style="color: #b6a0ff;">(</span>list
+<span style="color: #a8a8a8;">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; </span><span style="color: #a8a8a8;">Old Gmail ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+
+<span style="color: #6ae4b9;">(</span>make-mu4e-context
+    <span style="color: #f78fe7;">:name</span> <span style="color: #72a4ff;">"old-gmail"</span> <span style="color: #a8a8a8;">;;</span><span style="color: #a8a8a8;">for gmail-1</span>
+    <span style="color: #f78fe7;">:enter-func</span> <span style="color: #f0ce43;">(</span><span style="color: #b6a0ff;">lambda</span> <span style="color: #00bdfa;">()</span> <span style="color: #00bdfa;">(</span>mu4e-message <span style="color: #72a4ff;">"Entering context old-gmail"</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span>
+    <span style="color: #f78fe7;">:leave-func</span> <span style="color: #f0ce43;">(</span><span style="color: #b6a0ff;">lambda</span> <span style="color: #00bdfa;">()</span> <span style="color: #00bdfa;">(</span>mu4e-message <span style="color: #72a4ff;">"Leaving context old-gmail"</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span>
+    <span style="color: #f78fe7;">:match-func</span> <span style="color: #f0ce43;">(</span><span style="color: #b6a0ff;">lambda</span> <span style="color: #00bdfa;">(</span>msg<span style="color: #00bdfa;">)</span>
+                 <span style="color: #00bdfa;">(</span><span style="color: #b6a0ff;">when</span> msg
+                   <span style="color: #80d200;">(</span>mu4e-message-contact-field-matches
+                    msg '<span style="color: #f78fe7;">(</span><span style="color: #f78fe7;">:from</span> <span style="color: #f78fe7;">:to</span> <span style="color: #f78fe7;">:cc</span> <span style="color: #f78fe7;">:bcc</span><span style="color: #f78fe7;">)</span> <span style="color: #72a4ff;">"gmail1@gmail.com"</span><span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span>
+    <span style="color: #f78fe7;">:vars</span> '<span style="color: #f0ce43;">(</span><span style="color: #00bdfa;">(</span>user-mail-address . <span style="color: #72a4ff;">"gmail1@gmail.com"</span><span style="color: #00bdfa;">)</span>
+            <span style="color: #00bdfa;">(</span>user-full-name . <span style="color: #72a4ff;">"Ryan"</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-sent-folder . <span style="color: #72a4ff;">"/gmail-1/[gmail1].Sent Mail"</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-drafts-folder . <span style="color: #72a4ff;">"/gmail-1/[gmail1].drafts"</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-trash-folder . <span style="color: #72a4ff;">"/gmail-1/[gmail1].Bin"</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-compose-signature . <span style="color: #80d200;">(</span>concat <span style="color: #72a4ff;">"Formal Signature\n"</span> <span style="color: #72a4ff;">"Emacs 25, org-mode 9, mu4e 1.0\n"</span><span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-compose-format-flowed . t<span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>smtpmail-queue-dir . <span style="color: #72a4ff;">"~/.Maildir/gmail-1/queue/cur"</span><span style="color: #00bdfa;">)</span>
+
+               <span style="color: #00bdfa;">(</span><span style="color: #b6a0ff;">setq</span> message-sendmail-envelope-from 'header<span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>Mu4e-maildir-shortcuts . <span style="color: #80d200;">(</span> <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-1/INBOX"</span>            . ?i<span style="color: #f78fe7;">)</span>
+                                           <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-1/[gmail1].Sent Mail"</span> . ?s<span style="color: #f78fe7;">)</span>
+                                           <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-1/[gmail1].Bin"</span>       . ?t<span style="color: #f78fe7;">)</span>
+                                            <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-1/[gmail1].All Mail"</span>  . ?a<span style="color: #f78fe7;">)</span>
+                                           <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-1/[gmail1].Starred"</span>   . ?r<span style="color: #f78fe7;">)</span>
+                                           <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-1/[gmail1].drafts"</span>    . ?d<span style="color: #f78fe7;">)</span>
+                                           <span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span><span style="color: #6ae4b9;">)</span>
+
+<span style="color: #a8a8a8;">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; </span><span style="color: #a8a8a8;">Private Mail ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+
+      <span style="color: #6ae4b9;">(</span>make-mu4e-context
+       <span style="color: #f78fe7;">:name</span> <span style="color: #72a4ff;">"personal"</span> <span style="color: #a8a8a8;">;;</span><span style="color: #a8a8a8;">for personal-mail</span>
+        <span style="color: #f78fe7;">:enter-func</span> <span style="color: #f0ce43;">(</span><span style="color: #b6a0ff;">lambda</span> <span style="color: #00bdfa;">()</span> <span style="color: #00bdfa;">(</span>mu4e-message <span style="color: #72a4ff;">"Entering context personal"</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span>
+        <span style="color: #f78fe7;">:leave-func</span> <span style="color: #f0ce43;">(</span><span style="color: #b6a0ff;">lambda</span> <span style="color: #00bdfa;">()</span> <span style="color: #00bdfa;">(</span>mu4e-message <span style="color: #72a4ff;">"Leaving context personal"</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span>
+
+        <span style="color: #f78fe7;">:match-func</span> <span style="color: #f0ce43;">(</span><span style="color: #b6a0ff;">lambda</span> <span style="color: #00bdfa;">(</span>msg<span style="color: #00bdfa;">)</span>
+           <span style="color: #00bdfa;">(</span><span style="color: #b6a0ff;">when</span> msg
+         <span style="color: #80d200;">(</span>mu4e-message-contact-field-matches
+          msg '<span style="color: #f78fe7;">(</span><span style="color: #f78fe7;">:from</span> <span style="color: #f78fe7;">:to</span> <span style="color: #f78fe7;">:cc</span> <span style="color: #f78fe7;">:bcc</span><span style="color: #f78fe7;">)</span> <span style="color: #72a4ff;">"personal@yoururl.urdomain"</span><span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span>
+        <span style="color: #f78fe7;">:vars</span> '<span style="color: #f0ce43;">(</span><span style="color: #00bdfa;">(</span>user-mail-address . <span style="color: #72a4ff;">"personal@yoururl.urdomain"</span><span style="color: #00bdfa;">)</span>
+                <span style="color: #00bdfa;">(</span>user-full-name . <span style="color: #72a4ff;">"Ryan"</span><span style="color: #00bdfa;">)</span>      <span style="color: #00bdfa;">(</span>mu4e-sent-folder . <span style="color: #72a4ff;">"/personal-mail/[personal].Sent Mail"</span><span style="color: #00bdfa;">)</span>
+            <span style="color: #00bdfa;">(</span>mu4e-drafts-folder . <span style="color: #72a4ff;">"/personal-mail/[personal].Drafts"</span><span style="color: #00bdfa;">)</span>
+            <span style="color: #00bdfa;">(</span>mu4e-trash-folder . <span style="color: #72a4ff;">"/personal-mail/[personal].Trash"</span><span style="color: #00bdfa;">)</span>
+            <span style="color: #00bdfa;">(</span>mu4e-compose-format-flowed . t<span style="color: #00bdfa;">)</span>
+            <span style="color: #00bdfa;">(</span>smtpmail-queue-dir . <span style="color: #72a4ff;">"~/.Maildir/personal-mail/queue/cur"</span><span style="color: #00bdfa;">)</span>
+            <span style="color: #00bdfa;">(</span>mu4e-maildir-shortcuts . <span style="color: #80d200;">(</span> <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/personal-mail/INBOX"</span>            . ?i<span style="color: #f78fe7;">)</span>
+                     <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/personal-mail/[personal].Sent Mail"</span> . ?s<span style="color: #f78fe7;">)</span>
+                     <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/personal-mail/[personal].Trash"</span>     . ?t<span style="color: #f78fe7;">)</span>
+                     <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/personal-mail/[personal].Junk"</span>      . ?j<span style="color: #f78fe7;">)</span>
+                     <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/personal-mail/[personal].Drafts"</span>    . ?d<span style="color: #f78fe7;">)</span>
+                     <span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span><span style="color: #6ae4b9;">)</span>
+<span style="color: #a8a8a8;">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; </span><span style="color: #a8a8a8;">New Gmail ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+      <span style="color: #6ae4b9;">(</span>make-mu4e-context
+       <span style="color: #f78fe7;">:name</span> <span style="color: #72a4ff;">"gmail"</span> <span style="color: #a8a8a8;">;;</span><span style="color: #a8a8a8;">for gmail-2</span>
+       <span style="color: #f78fe7;">:enter-func</span> <span style="color: #f0ce43;">(</span><span style="color: #b6a0ff;">lambda</span> <span style="color: #00bdfa;">()</span> <span style="color: #00bdfa;">(</span>mu4e-message <span style="color: #72a4ff;">"Entering context gmail"</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span>
+       <span style="color: #f78fe7;">:leave-func</span> <span style="color: #f0ce43;">(</span><span style="color: #b6a0ff;">lambda</span> <span style="color: #00bdfa;">()</span> <span style="color: #00bdfa;">(</span>mu4e-message <span style="color: #72a4ff;">"Leaving context gmail"</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span>
+       <span style="color: #f78fe7;">:match-func</span> <span style="color: #f0ce43;">(</span><span style="color: #b6a0ff;">lambda</span> <span style="color: #00bdfa;">(</span>msg<span style="color: #00bdfa;">)</span>
+                     <span style="color: #00bdfa;">(</span><span style="color: #b6a0ff;">when</span> msg
+                   <span style="color: #80d200;">(</span>mu4e-message-contact-field-matches
+                    msg '<span style="color: #f78fe7;">(</span><span style="color: #f78fe7;">:from</span> <span style="color: #f78fe7;">:to</span> <span style="color: #f78fe7;">:cc</span> <span style="color: #f78fe7;">:bcc</span><span style="color: #f78fe7;">)</span> <span style="color: #72a4ff;">"gmail2@gmail.com"</span><span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span>
+       <span style="color: #f78fe7;">:vars</span> '<span style="color: #f0ce43;">(</span><span style="color: #00bdfa;">(</span>user-mail-address . <span style="color: #72a4ff;">"gmail2@gmail.com"</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>user-full-name . <span style="color: #72a4ff;">"Ryan"</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-sent-folder . <span style="color: #72a4ff;">"/gmail-2/[gmail2].Sent Mail"</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-drafts-folder . <span style="color: #72a4ff;">"/gmail-2/[gmail2].drafts"</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-trash-folder . <span style="color: #72a4ff;">"/gmail-2/[gmail2].Bin"</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-compose-signature . <span style="color: #80d200;">(</span>concat <span style="color: #72a4ff;">"Formal Signature\n"</span> <span style="color: #72a4ff;">"Emacs 25, org-mode 9, mu4e 1.0\n"</span><span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-compose-format-flowed . t<span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>smtpmail-queue-dir . <span style="color: #72a4ff;">"~/.Maildir/gmail-2/queue/cur"</span><span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span><span style="color: #b6a0ff;">setq</span> message-sendmail-envelope-from 'header<span style="color: #00bdfa;">)</span>
+               <span style="color: #00bdfa;">(</span>mu4e-maildir-shortcuts . <span style="color: #80d200;">(</span> <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-2/INBOX"</span>            . ?i<span style="color: #f78fe7;">)</span>
+                                       <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-2/[gmail2].Sent Mail"</span> . ?s<span style="color: #f78fe7;">)</span>
+                                       <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-2/[gmail2].Bin"</span>       . ?t<span style="color: #f78fe7;">)</span>
+                                       <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-2/[gmail2].All Mail"</span>  . ?a<span style="color: #f78fe7;">)</span>
+                                       <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-2/[gmail2].Starred"</span>   . ?r<span style="color: #f78fe7;">)</span>
+                                       <span style="color: #f78fe7;">(</span><span style="color: #72a4ff;">"/gmail-2/[gmail2].drafts"</span>    . ?d<span style="color: #f78fe7;">)</span>
+                                                   <span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span><span style="color: #6ae4b9;">)</span>
+
+              <span style="color: #b6a0ff;">)</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">Choose account label to feed msmtp -a option based on From header</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">in Message buffer; This function must be added to</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">message-send-mail-hook for on-the-fly change of From address before</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">sending message since message-send-mail-hook is processed right</span>
+<span style="color: #a8a8a8;">;; </span><span style="color: #a8a8a8;">before sending message.</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">defun</span> <span style="color: #feacd0;">choose-msmtp-account</span> <span style="color: #b6a0ff;">()</span>
+<span style="color: #b6a0ff;">(</span><span style="color: #b6a0ff;">if</span> <span style="color: #6ae4b9;">(</span>message-mail-p<span style="color: #6ae4b9;">)</span>
+<span style="color: #6ae4b9;">(</span><span style="color: #b6a0ff;">save-excursion</span>
+<span style="color: #f0ce43;">(</span><span style="color: #b6a0ff;">let*</span>
+   <span style="color: #00bdfa;">(</span><span style="color: #80d200;">(</span>from <span style="color: #f78fe7;">(</span><span style="color: #b6a0ff;">save-restriction</span>
+        <span style="color: #4ae8fc;">(</span>message-narrow-to-headers<span style="color: #4ae8fc;">)</span>
+        <span style="color: #4ae8fc;">(</span>message-fetch-field <span style="color: #72a4ff;">"from"</span><span style="color: #4ae8fc;">)</span><span style="color: #f78fe7;">)</span><span style="color: #80d200;">)</span>
+    <span style="color: #80d200;">(</span>account
+ <span style="color: #f78fe7;">(</span><span style="color: #b6a0ff;">cond</span>
+  <span style="color: #4ae8fc;">(</span><span style="color: #cfdf30;">(</span>string-match <span style="color: #72a4ff;">"gmail1@gmail.com"</span> from<span style="color: #cfdf30;">)</span> <span style="color: #72a4ff;">"gmail1"</span><span style="color: #4ae8fc;">)</span>
+  <span style="color: #4ae8fc;">(</span><span style="color: #cfdf30;">(</span>string-match <span style="color: #72a4ff;">"personal@yoururl.urdomain"</span> from<span style="color: #cfdf30;">)</span> <span style="color: #72a4ff;">"personal"</span><span style="color: #4ae8fc;">)</span>
+      <span style="color: #4ae8fc;">(</span><span style="color: #cfdf30;">(</span>string-match <span style="color: #72a4ff;">"gmail2@gmail.com"</span> from<span style="color: #cfdf30;">)</span> <span style="color: #72a4ff;">"gmail2"</span><span style="color: #4ae8fc;">)</span><span style="color: #f78fe7;">)</span><span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span>
+     <span style="color: #00bdfa;">(</span><span style="color: #b6a0ff;">setq</span> message-sendmail-extra-arguments <span style="color: #80d200;">(</span>list '<span style="color: #72a4ff;">"-a"</span> account<span style="color: #80d200;">)</span><span style="color: #00bdfa;">)</span><span style="color: #f0ce43;">)</span><span style="color: #6ae4b9;">)</span><span style="color: #b6a0ff;">)</span><span style="color: #00cd68;">)</span>
+
+
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> message-sendmail-envelope-from 'header<span style="color: #00cd68;">)</span>
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> message-send-mail-function 'message-send-mail-with-sendmail
+      sendmail-program <span style="color: #72a4ff;">"/usr/bin/msmtp"</span>
+      user-full-name <span style="color: #72a4ff;">"Ryan"</span><span style="color: #00cd68;">)</span>
+
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> message-sendmail-envelope-from 'header<span style="color: #00cd68;">)</span>
+<span style="color: #00cd68;">(</span>add-hook 'message-send-mail-hook 'choose-msmtp-account<span style="color: #00cd68;">)</span>
+
+<span style="color: #00cd68;">(</span><span style="color: #b6a0ff;">setq</span> mu4e-html2text-command 'mu4e-shr2text<span style="color: #00cd68;">)</span> 
+</pre>
+</div>
+
+<p>
+Obviously, you should replace gmail1 with your gmail, etc. etc. you know the drill by now. 
+</p>
+
+<p>
+Parts of this file also contain commented-out lines of configuration, and there are many ways you can customize your setup.
+All of the extra packages like mu4e-alert are completely optional, you can remove any of them at will.
+</p>
+
+<p>
+The bulk of this configuration file comes from <a href="https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/"><code>mu4e</code> for dummies</a>, while the very handy function choose-msmtp-account
+comes from <a href="https://notanumber.io/2016-10-03/better-email-with-mu4e/">Better Email With <code>mu4e</code></a>.
+</p>
+
+<p>
+And that's it! Enjoy your newfound productivity. You're now once step closer to being free from big tech.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Ryan</p>
+<p class="date">Created: 2020-07-01 Wed 17:06</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

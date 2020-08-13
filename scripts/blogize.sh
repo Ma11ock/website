@@ -12,13 +12,11 @@ Params:  blogize should be given the HTML files of the blogs it is to
 
 [ "$1" = "--help" ] && echo "$helpStr" && exit 0
 
-# The location of the blogfile
-mainBlogPage='blog.html'
 # link with path to the style sheet
 mainCSSPath='<link href="../css/main.css" rel="stylesheet">'
 # style divs
 styleDivs='<div class="emacs">
-            <div class="ebar-top"></div>
+             <div class="ebar-top"></div>
             <div class="ebar">
                 <p class="title-red">------</p>
                 <img id="gnu-emacs" src="../res/gnu-emacs.png"/> <p>*Blog*</p>
@@ -55,11 +53,16 @@ do
     unset didDiv
 done
 
+# The location of the blogfile
+mainBlogPage='blog.html'
+
 # Get the opening of the article
 opening=$(tr "\n" "|" < "$1" | grep -o '<p>.*</p>' | tr "|" "\n" | head)
 title=$(tr "\n" "|" < blogs/mu4e.html | grep -o '<title>.*</title>' | sed -e 's/<title>//g' -e 's-</title>--g')
 
 stat site-final/"$mainBlogPage" &>/dev/null && echo "Deleting existing final $mainBlogPage" && rm site-final/"$mainBlogPage"
+
+blogdate=$(grep -o '<p class=\"date\">.*</p>' "site-final/$1" | sed -e 's/<p class=\"date\">//g' -e 's-</p>--g')
 
 # Modify the blog file
 foreach blogfile in $@
@@ -69,12 +72,13 @@ do
     while read line
     do
         echo "$line" >> site-final/"$mainBlogPage"
-        echo "$line" | grep -q '<center><h1>Blog</h1></center>' \
+        echo "$line" | grep -q '<h1>Blog</h1>' \
             && echo "\n<div class=\"blogpreview\">\n<div class=\"bloghead\">\n<a href=\"$1\"><h3>$title</h3></a>\n</div>\n" >> site-final/"$mainBlogPage" \
+            && echo "\n<h5>$blogdate</h5>" >> site-final/"$mainBlogPage" \
             && echo "\n<div class=\"opening\">\n$opening\n</div>" >> site-final/"$mainBlogPage" \
             && echo "\n</div>\n<!--END_BLOGPOAST-->\n" >> site-final/"$mainBlogPage"
     done < "$mainBlogPage"
 done
 
-exit 0
 
+exit 0

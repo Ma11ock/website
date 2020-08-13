@@ -9,12 +9,15 @@ Options:
 
 [ "$1" = "--help" ] && echo "$helpStr" && exit 0
 
+grep '\:based\:' "$HOME/.emacs.d/elfeed.org" -v > files/elfeed.org
+
+
 # TODO Make these date sensitive
 cp -r res site-final/
 cp -r css site-final/
 cp -r files site-final/
 
-cp index.html programs.html other.html site-final/.
+cp index.html programs.html site-final/.
 
 # For blogs
 foreach script in "scripts/blogize.sh"; do
@@ -24,7 +27,7 @@ foreach script in "scripts/blogize.sh"; do
 done
 
 
-# Finishing touched (like last modified date)
+# Finishing touches (like last modified date)
 foreach script in "scripts/setdate.zsh"; do
 	foreach html in site-final/*.html site-final/blogs/*.html; do
 		([ "$1" = "--nodate" ] || [ "$html" -nt ".lastmod" ]) && "$script" "$html"
