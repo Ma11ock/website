@@ -1,0 +1,6 @@
+#+TITLE: The Year of the GNU HURD Desktop
+#+AUTHOR: Ryan
+#+EMAIL: ryan@ryanmj.xyz
+#+OPTIONS: num:nil
+
+

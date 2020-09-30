@@ -1,0 +1,9 @@
+#+TITLE: My Website
+#+AUTHOR: Ryan Jeffrey
+#+EMAIL: ryan@ryanmj.xyz
+#+OPTIONS: num:nil
+
+The source to [[ryanmj.xyz][my website]]. All in pure HTML/CSS... the way God intended.
+
+* How
+The site is generated through the shell scripts in ~scripts/~. I don't recommend using them yourself, they're very specific to my website and the way that it works. This repo is really just for archival purposes.

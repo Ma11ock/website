@@ -1,0 +1,16 @@
+#+TITLE: Details on My First Experiences Being an AUR Maintainer
+#+AUTHOR: Ryan
+#+EMAIL: ryan@ryanmj.xyz
+#+OPTIONS: num:nil
+
+
+I just set up an AUR package for Chasen (my spellcheck does not recognize your name) Lindsey's /[[https://www.moddb.com/mods/hyrule-conquest][Hyrule Conquest]]/, a Zelda fanfiction mod for /[[https://play0ad.com/][0ad]]/ (free software btw!). I've been a fan of Lindsey's since 2014, when /Hyrule Conquest/ was still /Hyrule: Total War/ and I've always wanted some way to contribute to it. My contribution is the [[https://aur.archlinux.org/packages/hyrule-conquest/][hyrule-conquest]] Arch User Repo package.
+
+Finding a place to host the files was mind-numbing to say the least. I can't just use the ~moddb~ download because it's not just the game that comes with it: it's also a Windows (cursed be its name) installer. To fix this, I installed the game through wine and then simply compressed the game's files with XZ maximum compression. This brings the 2.5GB game files to a more manageable 1.9GB... at the cost of extremely long compression times (for me) and almost just as painful decompression times (for the user). Thankfully, the installer doesn't set any state or really do anything other than be a ZIP front-end, so this method is tenable. 
+
+The next thing I needed was a place to host the files... this was the trickiest part. I /tried/ (oh how I tried) to get G©©gle (cursed be its name) Drive to be my platform, but because of its *mandatory virus scanning* it is impossible to use the common Unix net utilities to download the file (such as ~wget~ or ~curl~). Without a terminal interface Drive is simply not an option.
+
+The next best thing was Dropbox (cursed be its name)... which has an unfortunate 2GB file limit for non-paying users. This isn't a problem /now/... but it will be when I can no longer compress that small. The current version is already at the upper limit of that. If I can't think of anything clever I'll simply split the download into multiple files spread out across two (or more) DB accounts.
+
+* Dealing With the Arch Linux Packaging System
+Personally I found a the Arch Wiki's entry on making packages to be a bit confusing... but with the power of copying other people's package scripts I was able to persevere. 
