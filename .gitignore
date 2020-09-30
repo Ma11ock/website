@@ -60,3 +60,11 @@ site-final/
 .lastmod
  
 template.html
+
+blogs/*.html
+
+.backups/
+
+res/
+
+rss.xml

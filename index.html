@@ -1,60 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <meta charset="utf-8"/>
-    <meta name="description" content="Main page of Ryan's ~">
+    <meta name="description" content="Blog">
     <meta name="author" content="Ryan Jeffrey">
 
-    <title>Ryan's homepage</title>
-    <link href="css/main.css" rel="stylesheet">
-    
+    <link href="css/terminal.css" rel="stylesheet">
     <body>
-        <!--Emacs-style splash-->
-
-        <div class="emacs">
-            <div class="ebar-top"></div>
-            <div class="ebar"><p class="title-red">------</p><img alt="GNU EMACS" id="gnu-emacs" src="res/gnu-emacs.png"/>
-            <p>
-                *Homepage*
-            </p>
-                <div class="last">
-                    <p class="modded">Last Modified: <!--DATE--></p>
-                </div>
-            </div>
-            <div class="ebar-bot"></div>
-
-            <h1>Ryan's ~Page</h1>
-
-            <h2 style="text-align:center;">Welcome!</h2>
-
-            <div id="links">
-                <h3>Links:</h3>
-                <div class="code">
-                    <a href="https://gitlab.com/Mallock"><img alt="Gitlab" src="res/gitlab.svg"/></a>
-                    <a href="https://github.com/Ma11ock"><img alt="Github" src="res/octo.svg"/></a>
-                </div>
-            </div>
-
-            <table>
-                <tr>
-                    <td><a href="blog.html">Blog</a></td>
-                    <td><p>My Blog.<p></td>
-                </tr>
-                <tr>
-                    <td><a href="files/">Files</a></td>
-                    <td><p>Various important files not on my GitHub.<p></td>
-                </tr>
-                <tr>
-                    <td><a href="programs.html">Programs</a></td>
-                    <td><p>The programs/setup I use.<p></td>
-                </tr>
-                <tr>
-                    <td><a href="files/LICENSE.html">Copying Conditions</a></td>
-                    <td><p>Conditions for redistributing and changing this site.</p></td>
-                </tr>
-            </table>
-        </div>
+      <div id="task-meta" class="topl">
+        <h4 style="margin-left:1em; margin-top:0.5em;">Links</h4>
+        <hr>
         
-        <div class="fttr">
+      <div id="taskbar">
+          <div id="home">
+              <a href="index.html"><img src="res/user-home.png" alt="Homepage" class="taskimg"></a>
+              <h4>Home</h4>
+            </div>
+
+            <div id="blog">
+              <a href="blog.html"><img src="res/folder-documents.png" alt="Blog" class="taskimg"></a>
+              <h4>Blog</h4>
+            </div>
+
+            <div id="files">
+              <a href="files/"><img src="res/ktorrent.png" alt="Files" class="taskimg"></a>
+              <h4>Files</h4>
+            </div>
+            
+            <div id="git-server">
+              <a href="git/"><img src="res/folder-git.png" alt="git" class="taskimg"></a>
+              <h4>Git Server</h4>
+            </div>
+
+            <div id="contact-me">
+              <a href="mailto:ryan@ryanmj.xyz"><img alt="Email me" src="res/kopete.png"/></a>
+              <h4>Contact Me</h4>
+            </div>
+      </div>
+      </div>
+    
+        <div class="twin topl">
+                <div style="tcontent">
+                  <p>__PROMPT__ cat ~/intro.txt</p>
+                  <!--TITLE HERE-->
+
+                  <p>__PROMPT__ ls --group-directories-first -lh --color .
+                  </p>
+
+                    <!--REPLACE HERE-->
+                    
+                  <p>__PROMPT__ cat reason.txt</p>
+
+                  <p>
+                    This site is a celebration of old computers and technology (or, what is old and nostalgic to me). Everything here is designed to look like a Linux desktop from between the years 2008-2012. That was the last time you could still feel 90's era optimism about technology (or the future in general), and the first time I used Linux (my father started me on Ubuntu 08.04 when I was 10).
+
+                      In current year it's impossible to feel anything but disgust and disappointment over the state of technology. Social media has enabled conformism in a way never before thought possible. Every electronic device is a government surveillance machine. Unix is <i>still</i> using X11. Perhaps the Vi guy was right <a href="https://www.wired.com/2000/04/joy-2/">to go full AnPrim</a>.
+
+                    But this site at www.ryanmj.xyz <i>is not</i> about that. Instead, this is a place to LARP and pretend it's still 2008. It is a place where we can live in a world before Jack Dorsey literally ruined everything.
+
+                      <a href="https://www.amazon.com/Atomised-Michel-Houellebecq/dp/0099283360">This website is dedicated to mankind.</a>
+                  </p>
+                  
+                </div>
+        </div>
+
+                <div class="fttr">
             <a href="https://www.gnu.org/software/emacs/">
                 <img alt="POWERED BY EMACS" src="res/stickies/emacs.png" />
             </a>

@@ -13,7 +13,8 @@ Params:  blogize should be given the HTML files of the blogs it is to
 [ "$1" = "--help" ] && echo "$helpStr" && exit 0
 
 # link with path to the style sheet
-mainCSSPath='<link href="../css/main.css" rel="stylesheet">'
+# TODO this css file will change
+mainCSSPath='<link href="../css/emacs.css" rel="stylesheet">'
 # style divs
 styleDivs='<div class="emacs">
              <div class="ebar-top"></div>
@@ -30,20 +31,27 @@ styleDivs='<div class="emacs">
 echoerr() { printf "\e[31;1m%s\e[0m\n" "$*" >&2; }
 
 # Modifies each new blog entry to have the styling of the rest of the site 
-foreach blogfile in "$@"
+foreach blogfile in blogs/*.html weight.html
 do
     outFile=""$outDir"$blogfile"
-    echo "Outputting to file $outFile"
-    # TODO if the file already exists, then likely the latest version is a 
-    # revision. That should be mentioned in the title.
-    stat "$outFile" &>/dev/null && echo "$outFile exists. Deleting." && rm "$outFile"
+    stat "$outFile" &>/dev/null
+    retval=$?
+    if [ $retval -eq 0 ]  && [ "$blogfile" -nt "$outfile" ]; then 
+        echo "An update occured so $outfile is being deleted and remade." && rm "$outfile"
+    elif [ $retval -ne 0 ]; then
+        echo "Generating new blogfile for $blogfile"
+    else
+        continue
+    fi
+    
+    echo "Outputting to file $outFile..."
     while read line
     do
         echo "$line" >> "$outFile"
         echo "$line" | grep -- '<\/title>' &>/dev/null && echo "$mainCSSPath" >> "$outFile" && didCSS="1"
         echo "$line" | grep -- '<body>' &>/dev/null    && echo "$styleDivs"   >> "$outFile" && didStyle="1"
         echo "$line" | grep -- 'class="validation"' &>/dev/null && echo '</div>' >> "$outFile" && didDiv="1"
-    done < "$blogfile"
+    done < "$blogfile" 
     [ -v didCSS ] || echoerr "Warning: CSS file not linked to: "$blogfile""
     [ -v didStyle ] || echoerr "Warning: styledivs not written: "$blogfile""
     [ -v didDiv ] || echoerr "Warning: style div not closed: "$blogfile""
@@ -53,32 +61,3 @@ do
     unset didDiv
 done
 
-# The location of the blogfile
-mainBlogPage='blog.html'
-
-# Get the opening of the article
-opening=$(tr "\n" "|" < "$1" | grep -o '<p>.*</p>' | tr "|" "\n" | head)
-title=$(tr "\n" "|" < blogs/mu4e.html | grep -o '<title>.*</title>' | sed -e 's/<title>//g' -e 's-</title>--g')
-
-stat site-final/"$mainBlogPage" &>/dev/null && echo "Deleting existing final $mainBlogPage" && rm site-final/"$mainBlogPage"
-
-blogdate=$(grep -o '<p class=\"date\">.*</p>' "site-final/$1" | sed -e 's/<p class=\"date\">//g' -e 's-</p>--g')
-
-# Modify the blog file
-foreach blogfile in $@
-do
-    opening=$(tr "\n" "|" < "$1" | grep -o '<p>.*</p>' | tr "|" "\n" | head)
-
-    while read line
-    do
-        echo "$line" >> site-final/"$mainBlogPage"
-        echo "$line" | grep -q '<h1>Blog</h1>' \
-            && echo "\n<div class=\"blogpreview\">\n<div class=\"bloghead\">\n<a href=\"$1\"><h3>$title</h3></a>\n</div>\n" >> site-final/"$mainBlogPage" \
-            && echo "\n<h5>$blogdate</h5>" >> site-final/"$mainBlogPage" \
-            && echo "\n<div class=\"opening\">\n$opening\n</div>" >> site-final/"$mainBlogPage" \
-            && echo "\n</div>\n<!--END_BLOGPOAST-->\n" >> site-final/"$mainBlogPage"
-    done < "$mainBlogPage"
-done
-
-
-exit 0

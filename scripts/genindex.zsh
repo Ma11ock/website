@@ -33,7 +33,7 @@ function lsize() {
          "$(getdate $mydir)<a href=\"$mydir\"> $mydir</a></p>"
     done
     # for html files
-    foreach htmlf in blog.html programs.html weight.html; do
+    foreach htmlf in blog.html programs.html; do
         echo "<p>-rw-r--r-- 1 ryan ryan $(printwc $htmlf)"\
             "$(getdate "$htmlf")<a href=\""$htmlf"\">"\
             "$(sed -n -e 's/.*<title>\(.*\)<\/title>.*/\1/p' "$htmlf")</a></p>"
@@ -49,7 +49,7 @@ while read -r line; do
         echo '</p>'
     elif [ "$line" = '<meta name="author" content="Ryan Jeffrey">' ]; then
         echo '<!--'
-        figlet 'The industrial revolution and its consequences have been a disaster for the human race.'
+#        figlet 'The industrial revolution and its consequences have been a disaster for the human race.'
         echo '-->'
     else
         echo "$line"
